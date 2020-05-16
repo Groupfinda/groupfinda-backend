@@ -1,0 +1,27 @@
+version: "3"
+services:
+  backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile.dev
+    env_file:
+      - .env
+    ports:
+      - 3001:$BACKEND_DEVELOPMENT_PORT
+    volumes:
+      - /usr/app/backend/node_modules
+      - ./:/usr/app/backend
+    depends_on:
+      - mongodb
+  mongodb:
+    image: mongo:latest
+    env_file: .env
+    #remove this volume if you don not want persistent data
+    volumes:
+      - mongodata:/db/data
+    ports:
+      - 27017:27017
+    restart: always
+
+volumes:
+  mongodata:
