@@ -92,7 +92,6 @@ const userResolver: IResolvers = {
         userHobbies: [],
         userFaculty: null,
         userYearOfStudy: null,
-        userInteractions: [],
       });
       user.profile = profile.id;
       try {

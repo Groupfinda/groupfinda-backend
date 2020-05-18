@@ -1,12 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { UserType } from "./";
 
-//Type for user interaction
-type UserInteractionType = {
-  userId: UserType["_id"];
-  score: string;
-};
-
 //Interface for profile type without mongoDB
 export interface RawProfileType {
   user: UserType["_id"];
@@ -17,7 +11,6 @@ export interface RawProfileType {
   userHobbies: string[];
   userFaculty: string;
   userYearOfStudy: number;
-  userInteractions: Array<UserInteractionType>;
 }
 
 //Interface for profile type with mongoDB
@@ -36,15 +29,6 @@ const profileSchema: Schema = new mongoose.Schema({
   userHobbies: [String],
   userFaculty: String,
   userYearOfStudy: Number,
-  userInteractions: [
-    {
-      userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-      score: String,
-    },
-  ],
 });
 
 export const Profile = mongoose.model<ProfileType>("Profile", profileSchema);
