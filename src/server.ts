@@ -31,6 +31,7 @@ const server = new ApolloServer({
         return { currentUser: null };
       }
     }
+    return { currentUser: null };
   },
   validationRules: [depthLimit(7)],
 });
