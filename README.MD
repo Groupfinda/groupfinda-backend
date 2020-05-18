@@ -34,7 +34,7 @@ Once you are ready to run the backend, follow the following steps:
 Once you are ready to run the backend, follow the following steps:
 
 1. Run `npm run dev`
-2. View the graphql playground at [http://localhost:3001/graphql](http://localhost:3001/graphql)
+2. View the graphql playground at [http://localhost:3002/graphql](http://localhost:3002/graphql)
 
 ## Deploying the backend.
 
@@ -42,4 +42,4 @@ Once you are ready to build a backend build follow the following steps:
 
 1. Run `npm run build`
 2. Run `npm run start`
-3. View the backend at [http://localhost:3001/graphql](http://localhost:3001/graphql)
+3. View the backend at [http://localhost:3002/graphql](http://localhost:3002/graphql)

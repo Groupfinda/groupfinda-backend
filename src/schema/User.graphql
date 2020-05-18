@@ -1,4 +1,11 @@
 extend type Query {
+  """
+  Used for authentication on the front end
+
+  Should return a user if authorization header is correct
+
+  Returns null if not
+  """
   me: User
 }
 
@@ -68,9 +75,9 @@ type Token {
 Custom type for user preferences
 """
 type Preferences {
-  lowerAge: Number
-  upperAge: Number
-  maxDistance: Number
+  lowerAge: Int
+  upperAge: Int
+  maxDistance: Int
 }
 
 """

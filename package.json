@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@types/bcrypt": "^3.0.0",
+    "@types/graphql-resolvers": "^0.2.2",
     "@types/jsonwebtoken": "^8.3.9",
     "apollo-server-express": "^2.13.0",
     "bcrypt": "^4.0.1",
@@ -33,6 +34,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "graphql": "^15.0.0",
+    "graphql-resolvers": "^0.4.2",
     "http": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
     "merge-graphql-schemas": "^1.7.8",

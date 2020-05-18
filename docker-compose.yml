@@ -7,7 +7,7 @@ services:
     env_file:
       - .env
     ports:
-      - 3001:$BACKEND_DEVELOPMENT_PORT
+      - 3002:$BACKEND_DEVELOPMENT_PORT
     volumes:
       - /usr/app/backend/node_modules
       - ./:/usr/app/backend
