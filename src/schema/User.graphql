@@ -1,0 +1,97 @@
+extend type Query {
+  me: User
+}
+
+type Mutation {
+  """
+  "
+  Mutation to handle creating of a user with the specified arguments.
+
+  Profile should be generated at this point as well
+
+  Token generated with JWT is returned once user successfully signs up
+  """
+  createUser(
+    username: String!
+    password: String!
+    confirmPassword: String!
+    firstName: String!
+    lastName: String!
+    email: String!
+    gender: String!
+    birthday: Date!
+  ): Token!
+
+  """
+  "
+  Mutation for when user logs in with username and password.
+
+  Token generated with JWT is returned if credentials are correct.
+  """
+  loginUser(username: String!, password: String!): Token!
+
+  """
+  Mutation to handle case when user forgets password.
+
+  Checks if username and email match before sending a new password.
+  """
+  forgetPassword(username: String!, email: String!): Boolean!
+
+  """
+  Mutation for user to reset password.
+
+  Checks if original password matches before changing to new password
+  """
+  resetPassword(
+    originalPassword: String!
+    newPassword: String!
+    confirmNewPassword: String!
+  ): Boolean!
+
+  """
+  Mutation to delete a user (Mostly for testing at this stage)
+
+  Search for a user by the username and deletes him and his profile
+  """
+  deleteUser(username: String!): Boolean!
+}
+
+"""
+"
+Token key is generated with JWT to authenticate the user
+"""
+type Token {
+  token: String!
+}
+
+"""
+Custom type for user preferences
+"""
+type Preferences {
+  lowerAge: Number
+  upperAge: Number
+  maxDistance: Number
+}
+
+"""
+User Entity that contains relevant user information.
+
+Contains references to Group that user belongs to and user's Profile
+"""
+type User {
+  id: ID!
+  username: String!
+  firstName: String!
+  lastName: String!
+  password: String! #Remove this after testing
+  email: String!
+  gender: String!
+  avatar: String!
+  isVerified: Boolean!
+  dateJoined: Date!
+  birthday: Date!
+  location: String!
+  profile: ID!
+  group: [ID]!
+  preferences: Preferences
+}

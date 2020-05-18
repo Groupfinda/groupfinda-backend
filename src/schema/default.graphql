@@ -1,3 +1,5 @@
 type Query {
   helloWorld: String!
 }
+
+scalar Date;
