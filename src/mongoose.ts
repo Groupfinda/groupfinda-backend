@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import runScript from "./seed/data";
 
 const MONGO_HOST = process.env.MONGO_HOST;
 const MONGO_PORT = process.env.MONGO_PORT;
@@ -20,10 +21,13 @@ if (process.env.DEVELOPMENT) {
 
 mongoose.set("useFindAndModify", false);
 
-export const mongoConnectWithRetry = (): void => {
+export const mongoConnectWithRetry = async (): Promise<void> => {
   console.log("Attempting to connect");
-  mongoose.connect(mongoURI, options).catch((err) => {
+  try {
+    await mongoose.connect(mongoURI, options);
+    if (process.env.DEVELOPMENT) await runScript();
+  } catch (err) {
     console.log("MongoDB connection failed, retrying in 1 second");
     setTimeout(mongoConnectWithRetry, 1000);
-  });
+  }
 };

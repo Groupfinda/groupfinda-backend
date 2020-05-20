@@ -9,6 +9,11 @@ const defaultResolver: IResolvers = {
       return "👋 Hello world! 👋";
     },
   },
+  Mutation: {
+    refetchQuery(): string {
+      return "Refetching";
+    },
+  },
   Date: new GraphQLScalarType({
     name: "Date",
     description: "Date custom scalar type",
