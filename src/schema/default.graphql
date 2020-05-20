@@ -2,4 +2,8 @@ type Query {
   helloWorld: String!
 }
 
+type Mutation {
+  refetchQuery: String!
+}
+
 scalar Date

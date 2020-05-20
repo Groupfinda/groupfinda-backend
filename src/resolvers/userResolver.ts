@@ -4,10 +4,17 @@ import { User, UserType, TokenType, Profile, RangeQuestion } from "../models";
 import {
   UserInputError,
   ApolloError,
-  ForbiddenError,
+  AuthenticationError,
 } from "apollo-server-express";
 import { combineResolvers } from "graphql-resolvers";
 import { isAuthenticated } from "./helpers/authorization";
+
+const extractEmptyFields = (args: Object): string[] => {
+  const emptyFields = (Object.keys(args) as Array<keyof typeof args>).filter(
+    (key) => !args[key]
+  );
+  return emptyFields as string[];
+};
 
 const userResolver: IResolvers = {
   Query: {
@@ -53,15 +60,36 @@ const userResolver: IResolvers = {
         !args.gender ||
         !args.birthday
       ) {
-        throw new UserInputError("Missing required fields", {
-          invalidArgs: Object.keys(args),
+        throw new UserInputError("Input fields must not be empty", {
+          invalidArgs: extractEmptyFields(args),
+        });
+      }
+
+      // Make sure username is at least length 6
+      if (args.username.length < 6) {
+        throw new UserInputError("Username must be at least 6 characters", {
+          invalidArgs: ["username"],
+        });
+      }
+
+      // Make sure password is at least length 6
+      if (args.password.length < 6) {
+        throw new UserInputError("Password must be at least 6 characters", {
+          invalidArgs: ["password"],
         });
       }
 
       // Check if passwords match
       if (args.password !== args.confirmPassword) {
         throw new UserInputError("Passwords do not match", {
-          invalidArgs: [args.password, args.confirmPassword],
+          invalidArgs: ["password", "confirmPassword"],
+        });
+      }
+
+      // Check if email is of valid format
+      if (!args.email.includes("@")) {
+        throw new UserInputError("Email is not of valid format", {
+          invalidArgs: ["email"],
         });
       }
 
@@ -69,7 +97,7 @@ const userResolver: IResolvers = {
       const emailExists = await User.findOne({ email: args.email }).exec();
       if (emailExists) {
         throw new UserInputError("Email has already been registered", {
-          invalidArgs: args.email,
+          invalidArgs: ["email"],
         });
       }
 
@@ -79,7 +107,7 @@ const userResolver: IResolvers = {
       }).exec();
       if (usernameExists) {
         throw new UserInputError("Username is taken", {
-          invalidArgs: args.username,
+          invalidArgs: ["username"],
         });
       }
 
@@ -138,7 +166,28 @@ const userResolver: IResolvers = {
         email: string;
       }
     ): Promise<boolean> => {
-      //TODO
+      if (!args.username || !args.email) {
+        throw new UserInputError("Input fields must not be empty", {
+          invalidArgs: extractEmptyFields(args),
+        });
+      }
+
+      let user: UserType | null = null;
+      try {
+        user = await User.findOne({ username: args.username }).exec();
+      } catch (err) {
+        throw new ApolloError(err.message);
+      }
+      if (!user) {
+        throw new UserInputError("No such user", {
+          invalidArgs: ["username"],
+        });
+      }
+      if (user.username !== args.username || user.email !== args.email) {
+        throw new UserInputError("No such combination of username and email", {
+          invalidArgs: ["username", "email"],
+        });
+      }
       return true;
     },
     /**
@@ -160,22 +209,32 @@ const userResolver: IResolvers = {
       ): Promise<boolean> => {
         if (args.newPassword !== args.confirmNewPassword) {
           throw new UserInputError("Passwords do not match", {
-            invalidArgs: [args.newPassword, args.confirmNewPassword],
+            invalidArgs: ["newPassword", "confirmNewPassword"],
           });
         }
+
+        let user: UserType | null;
         try {
-          const user = await User.findById(context.currentUser.id).exec();
-          if (!user) throw new Error("User not found");
-          const correctPassword = await user.comparePassword(
-            args.originalPassword
-          );
-          if (!correctPassword) throw new Error("Password is incorrect");
-          user.password = args.newPassword;
-          await user.save();
-          return true;
+          user = await User.findById(context.currentUser.id).exec();
         } catch (err) {
-          throw new ForbiddenError(err.message);
+          throw new AuthenticationError(err.message);
         }
+        if (!user) throw new AuthenticationError("User not found");
+        const correctPassword = await user.comparePassword(
+          args.originalPassword
+        );
+        if (!correctPassword)
+          throw new UserInputError("Password is incorrect", {
+            invalidArgs: ["originalPassword"],
+          });
+        user.password = args.newPassword;
+        try {
+          await user.save();
+        } catch (err) {
+          throw new ApolloError(err.message);
+        }
+
+        return true;
       }
     ),
     /**
