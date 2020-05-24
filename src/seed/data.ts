@@ -1,4 +1,11 @@
-import { RawUserType, RawProfileType, User, Profile } from "../models";
+import {
+  RawUserType,
+  RawProfileType,
+  User,
+  Profile,
+  RangeQuestion,
+} from "../models";
+import questions from "./questions";
 
 const rawUser: RawUserType = {
   username: "username",
@@ -26,7 +33,7 @@ const user = new User(rawUser);
 
 const rawProfile: RawProfileType = {
   user: user["_id"],
-  rangeQuestions: [],
+  rangeQuestions: new Array(questions.length).fill(-1),
   eventPreferences: {},
   userHobbies: ["game"],
   userFaculty: "COM",

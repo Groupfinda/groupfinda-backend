@@ -1,6 +1,6 @@
 // resolverMap.ts
 import { IResolvers } from "graphql-tools";
-import { User, UserType, TokenType, Profile, RangeQuestion } from "../models";
+import { User, UserType, TokenType, Profile } from "../models";
 import {
   UserInputError,
   ApolloError,
@@ -114,9 +114,6 @@ const userResolver: IResolvers = {
       const user = new User(args);
       const profile = new Profile({
         user: user.id,
-        rangeQuestions: new Array(
-          await RangeQuestion.countDocuments({}).exec()
-        ).fill(0),
         userHobbies: [],
         userFaculty: null,
         userYearOfStudy: null,
