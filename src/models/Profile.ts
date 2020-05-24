@@ -1,10 +1,10 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { UserType, RangeQuestion } from "./";
+import { UserType } from "./";
 
 //Interface for profile type without mongoDB
 export interface RawProfileType {
   user: UserType["_id"];
-  rangeQuestions: number[];
+  rangeQuestions?: number[];
   eventPreferences: {
     [genre: string]: number;
   };
@@ -21,7 +21,10 @@ const profileSchema: Schema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  rangeQuestions: [Number],
+  rangeQuestions: {
+    type: [Number],
+    default: new Array(300).fill(0),
+  },
   eventPreferences: {
     type: Map,
     of: Number,
@@ -29,22 +32,6 @@ const profileSchema: Schema = new mongoose.Schema({
   userHobbies: [String],
   userFaculty: String,
   userYearOfStudy: Number,
-});
-
-/**
- * Pre-hook in Mongoose that modifies input on save
- * Sets default rangeQuestions to be an array of number of documents
- * in the RangeQuestions db
- */
-profileSchema.pre("save", async function (next: mongoose.HookNextFunction) {
-  const profile = this;
-
-  if (!profile.get("rangeQuestions")) {
-    const numberOfQuestions = await RangeQuestion.countDocuments({}).exec();
-    profile.set("rangeQuestions", new Array(numberOfQuestions).fill(0));
-  }
-
-  next();
 });
 
 export const Profile = mongoose.model<ProfileType>("Profile", profileSchema);

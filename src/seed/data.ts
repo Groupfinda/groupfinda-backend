@@ -27,13 +27,14 @@ const rawUser: RawUserType = {
     upperAge: 30,
     maxDistance: 5,
   },
+  newUser: true,
+  role: "USER",
 };
 
 const user = new User(rawUser);
 
 const rawProfile: RawProfileType = {
   user: user["_id"],
-  rangeQuestions: new Array(questions.length).fill(-1),
   eventPreferences: {},
   userHobbies: ["game"],
   userFaculty: "COM",
@@ -44,6 +45,7 @@ const profile = new Profile(rawProfile);
 user.profile = profile["_id"];
 
 export default async () => {
+  await RangeQuestion.insertMany(questions);
   await user.save();
   await profile.save();
 };

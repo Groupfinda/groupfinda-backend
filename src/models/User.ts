@@ -26,6 +26,8 @@ export interface RawUserType {
     upperAge: number;
     maxDistance: number;
   };
+  newUser: boolean;
+  role: "USER" | "HOST" | "ADMIN";
 }
 
 //Interface for token return type
@@ -50,7 +52,10 @@ const userSchema: Schema = new mongoose.Schema({
   email: String,
   gender: String,
   avatar: String,
-  isVerified: Boolean,
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
   dateJoined: Date,
   birthday: Date,
   location: String,
@@ -68,6 +73,15 @@ const userSchema: Schema = new mongoose.Schema({
     lowerAge: Number,
     upperAge: Number,
     maxDistance: Number,
+  },
+  newUser: {
+    type: Boolean,
+    default: true,
+  },
+  role: {
+    type: String,
+    enum: ["USER", "HOST", "ADMIN"],
+    default: "USER",
   },
 });
 
@@ -90,6 +104,8 @@ userSchema.pre("save", async function (next: mongoose.HookNextFunction) {
 
   if (!user.get("dateJoined")) user.set("dateJoined", new Date());
   if (!user.get("isVerified")) user.set("isVerified", false);
+  if (!user.get("isNew")) user.set("isNew", true);
+  if (!user.get("role")) user.set("role", "USER");
   if (!user.isModified("password")) return next();
 
   try {
