@@ -11,5 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Running tests on Docker
-      - run: docker-compose -f docker-compose-test.yml build
-      - run: docker-compose -f docker-compose-test.yml run --rm test npm run test
+        run: docker-compose -f docker-compose-test.yml build
+      - name: Running tests
+        run: docker-compose -f docker-compose-test.yml run --rm test npm run test
