@@ -10,7 +10,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Running tests on Docker
+      - name: Building Docker images
         run: docker-compose -f docker-compose-test.yml build
-      - name: Running tests
+      - name: Running tests on Docker
         run: docker-compose -f docker-compose-test.yml run --rm test npm run test
+      - name: Additional logging output
+        run: docker-compose logs
