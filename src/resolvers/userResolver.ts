@@ -8,6 +8,13 @@ import {
 } from "apollo-server-express";
 import { combineResolvers } from "graphql-resolvers";
 import { isAuthenticated } from "./helpers/authorization";
+import {
+  CreateUserType,
+  LoginUserType,
+  ForgetPasswordType,
+  ResetPasswordType,
+  DeleteUserType,
+} from "./types";
 
 const extractEmptyFields = (args: Object): string[] => {
   const emptyFields = (Object.keys(args) as Array<keyof typeof args>).filter(
@@ -38,16 +45,7 @@ const userResolver: IResolvers = {
      */
     createUser: async (
       root: void,
-      args: {
-        username: string;
-        password: string;
-        confirmPassword: string;
-        firstName: string;
-        lastName: string;
-        email: string;
-        gender: string;
-        birthday: Date;
-      }
+      args: CreateUserType
     ): Promise<TokenType> => {
       // Ensures all input fields are given
       if (
@@ -132,13 +130,7 @@ const userResolver: IResolvers = {
      *
      * Generates token to be returned to user for authentication
      */
-    loginUser: async (
-      root: void,
-      args: {
-        username: string;
-        password: string;
-      }
-    ): Promise<TokenType> => {
+    loginUser: async (root: void, args: LoginUserType): Promise<TokenType> => {
       try {
         const user = await User.findOne({ username: args.username }).exec();
         if (!user) throw new Error();
@@ -158,10 +150,7 @@ const userResolver: IResolvers = {
      */
     forgetPassword: async (
       root: void,
-      args: {
-        username: string;
-        email: string;
-      }
+      args: ForgetPasswordType
     ): Promise<boolean> => {
       if (!args.username || !args.email) {
         throw new UserInputError("Input fields must not be empty", {
@@ -197,11 +186,7 @@ const userResolver: IResolvers = {
       isAuthenticated,
       async (
         root: void,
-        args: {
-          originalPassword: string;
-          newPassword: string;
-          confirmNewPassword: string;
-        },
+        args: ResetPasswordType,
         context
       ): Promise<boolean> => {
         if (args.newPassword !== args.confirmNewPassword) {
@@ -239,12 +224,7 @@ const userResolver: IResolvers = {
      * Deletes associated user profile as well.
      * Mostly for testing.
      */
-    deleteUser: async (
-      root: void,
-      args: {
-        username: string;
-      }
-    ): Promise<boolean> => {
+    deleteUser: async (root: void, args: DeleteUserType): Promise<boolean> => {
       try {
         const user = await User.findOne({ username: args.username }).exec();
         if (!user) throw new Error();

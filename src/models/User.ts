@@ -1,7 +1,8 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { ProfileType, GroupType } from "./";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import config from "../config";
 
 // Constant for number of salt rounds
 const saltRounds = 10;
@@ -144,7 +145,7 @@ userSchema.methods.comparePassword = async function (
 userSchema.methods.tokenize = function () {
   const user = this.toJSON();
   user.id = user._id;
-  const secret = process.env.TOKEN_SECRET;
+  const secret = config.TOKEN_SECRET;
   return {
     token: jwt.sign(user, <jwt.Secret>secret),
   };
