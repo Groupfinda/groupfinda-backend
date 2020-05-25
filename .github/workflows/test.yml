@@ -13,13 +13,16 @@ jobs:
 
       - name: Building Docker images
         run: docker-compose -f docker-compose-test.yml build
-      - name: Run
+      - name: Run server
+        run: docker-compose -f docker-compose-test.yml up -d
       - name: Wait For Response
         uses: nev7n/wait_for_response@v1.0.1
         with:
           # URL to poll
-          url: http://localhost:3002/graphql # optional, default is http://localhost/
-
+          url: "http://localhost:3002/graphql" # optional, default is http://localhost/
+          responseCode: 200
+          timeout: 15000
+          interval: 500
       - name: Running tests on Docker
         run: docker-compose -f docker-compose-test.yml run --rm test
       - name: Additional logging output
