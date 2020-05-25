@@ -15,4 +15,5 @@ jobs:
       - name: Running tests on Docker
         run: docker-compose -f docker-compose-test.yml run --rm test npm run test
       - name: Additional logging output
+        if: ${{ failure() }}
         run: docker-compose logs
