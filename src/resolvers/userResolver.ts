@@ -8,6 +8,7 @@ import {
 } from "apollo-server-express";
 import { combineResolvers } from "graphql-resolvers";
 import { isAuthenticated } from "./helpers/authorization";
+import { extractEmptyFields } from "./helpers/util";
 import {
   CreateUserType,
   LoginUserType,
@@ -15,13 +16,6 @@ import {
   ResetPasswordType,
   DeleteUserType,
 } from "./types";
-
-const extractEmptyFields = (args: Object): string[] => {
-  const emptyFields = (Object.keys(args) as Array<keyof typeof args>).filter(
-    (key) => !args[key]
-  );
-  return emptyFields as string[];
-};
 
 const userResolver: IResolvers = {
   Query: {

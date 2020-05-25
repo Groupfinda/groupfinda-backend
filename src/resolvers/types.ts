@@ -28,3 +28,29 @@ export type ResetPasswordType = {
 export type DeleteUserType = {
   username: string;
 };
+
+export type CreateEventType = {
+  title: string;
+  description: string;
+  dateOfEvent: Date;
+  recurringMode: boolean;
+  dateLastRegister: Date;
+  images: [string];
+  private: boolean;
+  groupSize: number;
+  category: [string];
+  locationOn: boolean;
+};
+
+export type RegisterEventType = {
+  eventCode: string;
+};
+
+export type UnregisterEventType = {
+  eventId: string;
+};
+
+export type SearchEventType = {
+  searchTerm?: string;
+  eventCode?: string;
+};

@@ -15,6 +15,8 @@ export interface RawEventType {
   registeredUsers: Array<UserType["_id"]>;
   groups: Array<GroupType["_id"]>;
   locationOn: boolean;
+  eventCode: string;
+  recurringMode: boolean;
 }
 
 //Interface for Event type with mongoDB
@@ -46,6 +48,8 @@ const EventSchema: Schema = new mongoose.Schema({
     },
   ],
   locationOn: Boolean,
+  eventCode: String,
+  recurringMode: Boolean,
 });
 
 export const Event = mongoose.model<EventType>("Event", EventSchema);

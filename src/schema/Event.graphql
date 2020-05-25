@@ -1,0 +1,48 @@
+extend type Query {
+  """
+  Searces and always returns an Array. Empty array should be returned when no events
+  are found.
+
+  Optional search term or event code as arguments for reusability
+  """
+  searchEvent(searchTerm: String, eventCode: String): [Event]!
+}
+
+extend type Mutation {
+  createEvent(
+    title: String!
+    description: String!
+    dateOfEvent: Date!
+    recurringMode: Boolean!
+    dateLastRegister: Date!
+    images: [String]!
+    private: Boolean!
+    groupSize: Int!
+    category: [String]!
+    locationOn: Boolean!
+  ): Event!
+  registerEvent(eventCode: String!): Event!
+  unregisterEvent(eventId: String!): Event!
+  deleteAllEvent: Boolean!
+}
+
+"""
+Default Event type with custom resolvers
+"""
+type Event {
+  id: ID!
+  title: String!
+  description: String!
+  owner: User!
+  recurringMode: Boolean!
+  dateOfEvent: Date!
+  dateLastRegister: Date!
+  images: [String]!
+  private: Boolean!
+  groupSize: Int!
+  category: [String]!
+  registeredUsers: [User]!
+  groups: [String]!
+  locationOn: Boolean!
+  eventCode: String!
+}

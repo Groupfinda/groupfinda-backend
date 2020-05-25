@@ -52,7 +52,10 @@ const userSchema: Schema = new mongoose.Schema({
   password: String,
   email: String,
   gender: String,
-  avatar: String,
+  avatar: {
+    type: String,
+    default: "https://publicdomainvectors.org/photos/abstract-user-flat-3.png",
+  },
   isVerified: {
     type: Boolean,
     default: false,
