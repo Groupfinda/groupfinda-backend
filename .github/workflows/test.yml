@@ -10,6 +10,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Building Docker images
         run: docker-compose -f docker-compose-test.yml build
       - name: Running tests on Docker
