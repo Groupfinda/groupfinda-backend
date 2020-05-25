@@ -1,4 +1,6 @@
 version: "3"
+volumes:
+  mongodata:
 services:
   backend:
     build:
@@ -16,4 +18,6 @@ services:
       - mongodb
   mongodb:
     image: mongo:latest
+    volumes:
+      - mongodata:/data/db
     restart: always
