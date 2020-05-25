@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile.dev
     environment:
       - PORT=3002
-      - NODE_ENV=development
+      - NODE_ENV=test
     ports:
       - 3002:3002
     volumes:
@@ -17,3 +17,17 @@ services:
   mongodb:
     image: mongo:latest
     restart: always
+  test:
+    build:
+      context: ./
+      dockerfile: Dockerfile.dev
+    environment:
+      - PORT=3002
+      - NODE_ENV=test
+    volumes:
+      - /usr/app/backend/node_modules
+      - ./:/usr/app/backend
+    depends_on:
+      - mongodb
+      - backend
+    command: npm run test

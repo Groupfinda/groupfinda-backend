@@ -100,4 +100,6 @@ type User {
   profile: ID!
   group: [ID]!
   preferences: Preferences
+  newUser: Boolean!
+  role: String!
 }

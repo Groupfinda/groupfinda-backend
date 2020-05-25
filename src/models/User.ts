@@ -1,7 +1,8 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { ProfileType, GroupType } from "./";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import config from "../config";
 
 // Constant for number of salt rounds
 const saltRounds = 10;
@@ -26,6 +27,8 @@ export interface RawUserType {
     upperAge: number;
     maxDistance: number;
   };
+  newUser: boolean;
+  role: "USER" | "HOST" | "ADMIN";
 }
 
 //Interface for token return type
@@ -50,7 +53,10 @@ const userSchema: Schema = new mongoose.Schema({
   email: String,
   gender: String,
   avatar: String,
-  isVerified: Boolean,
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
   dateJoined: Date,
   birthday: Date,
   location: String,
@@ -68,6 +74,15 @@ const userSchema: Schema = new mongoose.Schema({
     lowerAge: Number,
     upperAge: Number,
     maxDistance: Number,
+  },
+  newUser: {
+    type: Boolean,
+    default: true,
+  },
+  role: {
+    type: String,
+    enum: ["USER", "HOST", "ADMIN"],
+    default: "USER",
   },
 });
 
@@ -90,6 +105,8 @@ userSchema.pre("save", async function (next: mongoose.HookNextFunction) {
 
   if (!user.get("dateJoined")) user.set("dateJoined", new Date());
   if (!user.get("isVerified")) user.set("isVerified", false);
+  if (!user.get("isNew")) user.set("isNew", true);
+  if (!user.get("role")) user.set("role", "USER");
   if (!user.isModified("password")) return next();
 
   try {
@@ -128,7 +145,7 @@ userSchema.methods.comparePassword = async function (
 userSchema.methods.tokenize = function () {
   const user = this.toJSON();
   user.id = user._id;
-  const secret = process.env.TOKEN_SECRET;
+  const secret = config.TOKEN_SECRET;
   return {
     token: jwt.sign(user, <jwt.Secret>secret),
   };

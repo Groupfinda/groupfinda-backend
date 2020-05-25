@@ -4,7 +4,7 @@ import { UserType } from "./";
 //Interface for profile type without mongoDB
 export interface RawProfileType {
   user: UserType["_id"];
-  rangeQuestions: number[];
+  rangeQuestions?: number[];
   eventPreferences: {
     [genre: string]: number;
   };
@@ -21,7 +21,10 @@ const profileSchema: Schema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  rangeQuestions: [Number],
+  rangeQuestions: {
+    type: [Number],
+    default: new Array(300).fill(0),
+  },
   eventPreferences: {
     type: Map,
     of: Number,

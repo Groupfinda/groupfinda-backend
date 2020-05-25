@@ -7,11 +7,11 @@ import cors from "cors";
 import schema from "./schema";
 import { mongoConnectWithRetry } from "./mongoose";
 import jwt from "jsonwebtoken";
+import config from "./config";
 
-const PORT = process.env.DEVELOPMENT
-  ? process.env.BACKEND_DEVELOPMENT_PORT
-  : 3000;
+const PORT = config.PORT;
 
+console.log(`We are running in ${config.NODE_ENV}`);
 mongoConnectWithRetry();
 
 const app = express();
@@ -24,7 +24,7 @@ const server = new ApolloServer({
       try {
         const decodedToken = jwt.verify(
           auth.substring(7),
-          <jwt.Secret>process.env.TOKEN_SECRET
+          <jwt.Secret>config.TOKEN_SECRET
         );
         return { currentUser: decodedToken };
       } catch (err) {

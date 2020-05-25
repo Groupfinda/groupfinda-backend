@@ -1,4 +1,11 @@
-import { RawUserType, RawProfileType, User, Profile } from "../models";
+import {
+  RawUserType,
+  RawProfileType,
+  User,
+  Profile,
+  RangeQuestion,
+} from "../models";
+import questions from "./questions";
 
 const rawUser: RawUserType = {
   username: "username",
@@ -20,13 +27,14 @@ const rawUser: RawUserType = {
     upperAge: 30,
     maxDistance: 5,
   },
+  newUser: true,
+  role: "USER",
 };
 
 const user = new User(rawUser);
 
 const rawProfile: RawProfileType = {
   user: user["_id"],
-  rangeQuestions: [],
   eventPreferences: {},
   userHobbies: ["game"],
   userFaculty: "COM",
@@ -37,6 +45,7 @@ const profile = new Profile(rawProfile);
 user.profile = profile["_id"];
 
 export default async () => {
+  await RangeQuestion.insertMany(questions);
   await user.save();
   await profile.save();
 };
