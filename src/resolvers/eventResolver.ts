@@ -15,6 +15,10 @@ import { UserInputError, ForbiddenError } from "apollo-server-express";
 
 const eventResolver: IResolvers = {
   Query: {
+    /**
+     * Searches for an event.
+     * Optional search fields searchTerm OR eventCode
+     */
     searchEvent: async (_, args: SearchEventType): Promise<EventType[]> => {
       //Regex case insensitive search on title and description
       if (args.searchTerm) {
@@ -38,6 +42,10 @@ const eventResolver: IResolvers = {
     },
   },
   Mutation: {
+    /**
+     * Creates an event
+     * User must be authenticated to carry out this action
+     */
     createEvent: combineResolvers(
       isAuthenticated,
       async (_, args: CreateEventType, context): Promise<EventType> => {
@@ -62,15 +70,17 @@ const eventResolver: IResolvers = {
         return savedEvent;
       }
     ),
+    /**
+     * Register for an event.
+     * User must be authenticated in order to carry out this action
+     */
     registerEvent: combineResolvers(
       isAuthenticated,
       async (_, args: RegisterEventType, context): Promise<EventType> => {
-        const event = await Event.findOne({ eventCode: args.eventCode });
+        if (!args.eventId) throw new UserInputError("Invalid ID");
+        const event = await Event.findById(args.eventId);
         if (!event) {
-          throw new UserInputError(
-            `No event with code ${args.eventCode} was found`,
-            { invalidArgs: ["eventCode"] }
-          );
+          throw new ForbiddenError("No such event found");
         }
         if (event.registeredUsers.includes(context.currentUser.id)) {
           throw new ForbiddenError(
@@ -81,6 +91,10 @@ const eventResolver: IResolvers = {
         return await event.save();
       }
     ),
+    /**
+     * Unregister for an event.
+     * User must be authenticated in order to carry out this action
+     */
     unregisterEvent: combineResolvers(
       isAuthenticated,
       async (_, args: UnregisterEventType, context): Promise<EventType> => {
@@ -90,7 +104,9 @@ const eventResolver: IResolvers = {
           throw new ForbiddenError("No such event found");
         }
         if (!event.registeredUsers.includes(context.currentUser.id)) {
-          throw new ForbiddenError("User is not registered for the event");
+          throw new ForbiddenError(
+            `User is not registered for the event ${event.title}`
+          );
         }
 
         const newRegisteredUsers = event.registeredUsers.filter(
@@ -102,18 +118,27 @@ const eventResolver: IResolvers = {
         return savedEvent;
       }
     ),
+    /**
+     * Delete all event for testing purposes
+     * Should probably add an admin restriction here after dev
+     */
     deleteAllEvent: async (): Promise<boolean> => {
       await Event.deleteMany({});
       return true;
     },
   },
   Event: {
+    /**
+     * Gets owner from DB and returns it
+     */
     owner: async (root: EventType): Promise<UserType> => {
       await root.populate("owner").execPopulate();
       return root.owner;
     },
+    /**
+     * Gets list of registered users and returns them
+     */
     registeredUsers: async (root: EventType): Promise<UserType[]> => {
-      console.log("Running once");
       await root.populate("registeredUsers").execPopulate();
       return root.registeredUsers;
     },

@@ -9,6 +9,13 @@ extend type Query {
 }
 
 extend type Mutation {
+  """
+  Creates an event with the specified argument fields.
+
+  If recurring mode is turned on both date of event and date of last register should be invalid
+  
+  User must at least be authenticated to do so
+  """
   createEvent(
     title: String!
     description: String!
@@ -21,8 +28,17 @@ extend type Mutation {
     category: [String]!
     locationOn: Boolean!
   ): Event!
-  registerEvent(eventCode: String!): Event!
+  """
+  Register event for a user. Requires authentication. Will not work if user is already registered
+  """
+  registerEvent(eventId: String!): Event!
+  """
+  Unregister event for a user. Requires authentication. Will not work if user is not registered
+  """
   unregisterEvent(eventId: String!): Event!
+  """
+  Delete all events for testing purposes
+  """
   deleteAllEvent: Boolean!
 }
 

@@ -43,7 +43,7 @@ export type CreateEventType = {
 };
 
 export type RegisterEventType = {
-  eventCode: string;
+  eventId: string;
 };
 
 export type UnregisterEventType = {
