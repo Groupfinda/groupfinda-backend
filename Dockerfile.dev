@@ -1,11 +1,11 @@
 #Base Image
 FROM node:alpine
-
+RUN apk add --no-cache bash
 WORKDIR /usr/app/backend
 COPY ./package*.json ./
 
 RUN npm install 
 
 COPY ./ ./
-
+RUN chmod +x ./wait-for-it.sh
 CMD ["npm", "run", "dev"]

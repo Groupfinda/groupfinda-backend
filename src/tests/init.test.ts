@@ -11,6 +11,10 @@ beforeAll(async () => {
 test("helloWorld", async () => {
   const response = await userApi.helloWorld();
   expect(response.data.data.helloWorld).toBeTruthy();
+  const user = new User();
+  console.log(user);
+  const savedUser = await user.save();
+  console.log(savedUser);
 });
 
 describe("Users", () => {
