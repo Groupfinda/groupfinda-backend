@@ -54,3 +54,7 @@ export type SearchEventType = {
   searchTerm?: string;
   eventCode?: string;
 };
+
+export type GetEventType = {
+  eventId: string;
+};
