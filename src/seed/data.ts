@@ -1,11 +1,4 @@
-import {
-  RawUserType,
-  RawProfileType,
-  User,
-  Profile,
-  RangeQuestion,
-  Event,
-} from "../models";
+import { RawUserType, User, Profile, RangeQuestion, Event } from "../models";
 import questions from "./questions";
 
 const rawUser: RawUserType = {
@@ -22,7 +15,7 @@ const rawUser: RawUserType = {
   location: "Singapore",
   birthday: new Date("1998-01-01"),
   profile: "",
-  group: [],
+  groups: [],
   preferences: {
     lowerAge: 18,
     upperAge: 30,
@@ -34,7 +27,7 @@ const rawUser: RawUserType = {
 
 const user = new User(rawUser);
 
-const rawProfile: RawProfileType = {
+const rawProfile = {
   user: user["_id"],
   eventPreferences: {},
   userHobbies: ["game"],

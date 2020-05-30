@@ -96,8 +96,8 @@ type User {
   dateJoined: Date!
   birthday: Date!
   location: String!
-  profile: ID!
-  group: [ID]!
+  profile: Profile!
+  groups: [ID]!
   preferences: Preferences
   newUser: Boolean!
   role: String!
