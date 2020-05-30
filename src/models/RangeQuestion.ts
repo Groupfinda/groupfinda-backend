@@ -10,8 +10,14 @@ export interface RawRangeQuestionType {
 export interface RangeQuestionType extends Document, RawRangeQuestionType {}
 
 const RangeQuestionSchema: Schema = new mongoose.Schema({
-  content: String,
-  order: Number,
+  content: {
+    type: String,
+    required: true,
+  },
+  order: {
+    type: Number,
+    required: true,
+  },
 });
 
 export const RangeQuestion = mongoose.model<RangeQuestionType>(

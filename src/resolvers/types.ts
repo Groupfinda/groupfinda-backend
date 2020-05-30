@@ -61,6 +61,8 @@ export type SearchEventType = {
   eventCode?: string;
 };
 
-export type GetEventType = {
-  eventId: string;
+export type SubmitRangeQuestionType = {
+  order: number;
+  value: number;
+  
 };

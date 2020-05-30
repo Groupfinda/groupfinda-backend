@@ -4,7 +4,7 @@ import { UserType } from "./";
 //Interface for profile type without mongoDB
 export interface RawProfileType {
   user: UserType["_id"];
-  rangeQuestions?: number[];
+  rangeQuestions: number[];
   eventPreferences: {
     [genre: string]: number;
   };

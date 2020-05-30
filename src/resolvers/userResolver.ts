@@ -1,6 +1,6 @@
 // resolverMap.ts
 import { IResolvers } from "graphql-tools";
-import { User, UserType, TokenType, Profile } from "../models";
+import { User, UserType, TokenType, Profile, ProfileType } from "../models";
 import {
   UserInputError,
   ApolloError,
@@ -232,6 +232,11 @@ const userResolver: IResolvers = {
         });
       }
       return true;
+    },
+  },
+  User: {
+    profile: async (root: UserType): Promise<ProfileType> => {
+      return (await root.populate("profile").execPopulate()).profile;
     },
   },
 };

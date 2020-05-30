@@ -21,7 +21,7 @@ export interface RawUserType {
   birthday: Date;
   location: String;
   profile: ProfileType["_id"];
-  group: Array<GroupType["_id"]>;
+  groups: Array<GroupType["_id"]>;
   preferences: {
     lowerAge: number;
     upperAge: number;
@@ -67,7 +67,7 @@ const userSchema: Schema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Profile",
   },
-  group: [
+  groups: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Group",

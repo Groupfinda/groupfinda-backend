@@ -2,6 +2,7 @@
 import { IResolvers } from "graphql-tools";
 import { GraphQLScalarType } from "graphql";
 import { Kind } from "graphql/language";
+import { JSONResolver } from "graphql-scalars";
 
 const defaultResolver: IResolvers = {
   Query: {
@@ -30,6 +31,7 @@ const defaultResolver: IResolvers = {
       return null;
     },
   }),
+  JSON: JSONResolver,
 };
 
 export default defaultResolver;
