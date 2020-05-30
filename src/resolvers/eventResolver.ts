@@ -10,6 +10,7 @@ import {
   RegisterEventType,
   UnregisterEventType,
   SearchEventType,
+  GetEventType,
 } from "./types";
 import { UserInputError, ForbiddenError } from "apollo-server-express";
 
@@ -39,6 +40,21 @@ const eventResolver: IResolvers = {
       }
       //Returns all events
       return Event.find({});
+    },
+    /**
+     * Gets an event by the ID
+     * Can return null
+     */
+    getEvent: async (
+      root: void,
+      args: GetEventType
+    ): Promise<EventType | null> => {
+      if (!args.eventId) throw new UserInputError("ID must be supplied");
+      try {
+        return await Event.findById(args.eventId).exec();
+      } catch (err) {
+        throw new ForbiddenError(err.message);
+      }
     },
   },
   Mutation: {

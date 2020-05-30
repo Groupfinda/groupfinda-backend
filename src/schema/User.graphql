@@ -95,7 +95,7 @@ type User {
   isVerified: Boolean!
   dateJoined: Date!
   birthday: Date!
-  location: String!
+  location: String
   profile: ID!
   group: [ID]!
   preferences: Preferences
