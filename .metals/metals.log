@@ -1,0 +1,3 @@
+2020.05.30 19:03:08 INFO  started: Metals version 0.9.0 in workspace 'C:\Users\gabri\Orbital\groupfinda-backend'
+2020.05.30 19:03:09 INFO  time: initialize in 1.1s
+2020.05.30 19:03:10 WARN  no build tool detected in workspace 'C:\Users\gabri\Orbital\groupfinda-backend'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 

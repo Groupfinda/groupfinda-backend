@@ -57,6 +57,10 @@ const rawEvent = {
   locationOn: false,
   owner: user.id,
   eventCode: "123456",
+  location: {
+    address: "Singapore Expo Hall",
+    postalCode: "681234"
+  }
 };
 
 const profile = new Profile(rawProfile);
