@@ -40,6 +40,12 @@ export type CreateEventType = {
   groupSize: number;
   category: [string];
   locationOn: boolean;
+  location: LocationType;
+};
+
+export type LocationType = {
+  address: string;
+  postalCode: string;
 };
 
 export type RegisterEventType = {
@@ -58,4 +64,5 @@ export type SearchEventType = {
 export type SubmitRangeQuestionType = {
   order: number;
   value: number;
+  
 };

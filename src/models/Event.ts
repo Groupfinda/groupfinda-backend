@@ -17,6 +17,10 @@ export interface RawEventType {
   locationOn: boolean;
   eventCode: string;
   recurringMode: boolean;
+  location: {
+    address: string;
+    postalCode: string;
+  };
 }
 
 //Interface for Event type with mongoDB
@@ -50,6 +54,10 @@ const EventSchema: Schema = new mongoose.Schema({
   locationOn: Boolean,
   eventCode: String,
   recurringMode: Boolean,
+  location: {
+    address: String,
+    postalCode: String,
+  },
 });
 
 export const Event = mongoose.model<EventType>("Event", EventSchema);

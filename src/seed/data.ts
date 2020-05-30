@@ -50,6 +50,10 @@ const rawEvent = {
   locationOn: false,
   owner: user.id,
   eventCode: "123456",
+  location: {
+    address: "NUS",
+    postalCode: 123456,
+  },
 };
 
 const profile = new Profile(rawProfile);
