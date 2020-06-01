@@ -51,27 +51,71 @@ export const createUser = async (variables: CreateUserType) =>
 export const loginUser = async (variables: LoginUserType) =>
   axios.post(API_URL, {
     query: `
-              query ()
+    mutation loginUser($username: String!, $password: String!) {
+      loginUser(username: $username, password: $password) {
+        token
+      }
+    }
           `,
+    variables,
   });
 
 export const forgetPassword = async (variables: ForgetPasswordType) =>
   axios.post(API_URL, {
     query: `
-              query ()
+    mutation forgetPassword($username: String!, $email: String!) {
+      forgetPassword(username: $username, email: $email)
+    }
           `,
+    variables,
   });
 
-export const resetPassword = async (variables: ResetPasswordType) =>
-  axios.post(API_URL, {
-    query: `
-                query ()
+export const resetPassword = async (
+  variables: ResetPasswordType,
+  token: string = ""
+) =>
+  axios.post(
+    API_URL,
+    {
+      query: `
+    mutation resetPassword(
+      $originalPassword: String!
+      $newPassword: String!
+      $confirmNewPassword: String!
+    ) {
+      resetPassword(
+        originalPassword: $originalPassword
+        newPassword: $newPassword
+        confirmNewPassword: $confirmNewPassword
+      )
+    }
             `,
-  });
+      variables,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
-export const deleteUser = async (variables: DeleteUserType) =>
-  axios.post(API_URL, {
-    query: `
-              query ()
+export const deleteUser = async (
+  variables: DeleteUserType,
+  token: string = ""
+) =>
+  axios.post(
+    API_URL,
+    {
+      query: `
+    mutation deleteUser($username: String!) {
+      deleteUser(username: $username)
+    }
           `,
-  });
+      variables,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );

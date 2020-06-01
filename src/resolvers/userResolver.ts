@@ -79,7 +79,7 @@ const userResolver: IResolvers = {
       }
 
       // Check if email is of valid format
-      if (!args.email.includes("@")) {
+      if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(args.email)) {
         throw new UserInputError("Email is not of valid format", {
           invalidArgs: ["email"],
         });
