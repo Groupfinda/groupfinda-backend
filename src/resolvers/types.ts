@@ -64,5 +64,8 @@ export type SearchEventType = {
 export type SubmitRangeQuestionType = {
   order: number;
   value: number;
-  
+};
+
+export type GetEventType = {
+  eventId: string;
 };
