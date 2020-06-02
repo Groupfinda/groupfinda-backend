@@ -4,6 +4,7 @@ extend type Query {
   Returns all 300 Range Questions in the database
   """
   getAllRangeQuestions: [RangeQuestion]!
+  getUserProfile: Profile!
 }
 
 extend type Mutation {
