@@ -1,5 +1,4 @@
 import axios from "axios";
-import config from "../config";
 import {
   CreateUserType,
   LoginUserType,
@@ -7,8 +6,7 @@ import {
   ResetPasswordType,
   DeleteUserType,
 } from "../resolvers/types";
-
-const API_URL = `http://backend:${config.PORT}/graphql`;
+import { API_URL } from "./data";
 
 export const helloWorld = async () =>
   axios.post(API_URL, {

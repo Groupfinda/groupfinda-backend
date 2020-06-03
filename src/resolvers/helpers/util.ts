@@ -1,6 +1,6 @@
 export const extractEmptyFields = (args: Object): string[] => {
   const emptyFields = (Object.keys(args) as Array<keyof typeof args>).filter(
-    (key) => !args[key]
+    (key) => !args[key] || args[key].length === 0
   );
   return emptyFields as string[];
 };

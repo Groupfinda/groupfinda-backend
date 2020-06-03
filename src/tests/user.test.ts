@@ -15,11 +15,6 @@ beforeAll(async () => {
   await mongoConnectWithRetry();
 });
 
-test("helloWorld", async () => {
-  const response = await userApi.helloWorld();
-  expect(response.data.data.helloWorld).toBeTruthy();
-});
-
 describe("Users", () => {
   describe(`createUser(
     username: String!

@@ -35,10 +35,10 @@ export type CreateEventType = {
   dateOfEvent: Date;
   recurringMode: boolean;
   dateLastRegister: Date;
-  images: [string];
+  images: string[];
   private: boolean;
   groupSize: number;
-  category: [string];
+  category: string[];
   locationOn: boolean;
   location: LocationType;
 };
