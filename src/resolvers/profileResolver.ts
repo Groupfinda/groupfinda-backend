@@ -29,6 +29,21 @@ const defaultResolver: IResolvers = {
         throw new ApolloError(err.message);
       }
     },
+    /**
+     * Queries for user profile based on token obtained from headers
+     */
+    getUserProfile: async (root: void, args: void, context): Promise<ProfileType> => {
+      const profile = await Profile.findOne({
+        user: context.currentUser.id,
+      }).exec();
+      if (!profile) throw new AuthenticationError("User is not valid");
+
+      try {
+        return profile
+      } catch (err) {
+        throw new ApolloError(err.message);
+      }
+    }
   },
   Mutation: {
     /**
