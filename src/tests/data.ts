@@ -2,6 +2,7 @@ import {
   CreateUserType,
   LoginUserType,
   ForgetPasswordType,
+  ResetPasswordType,
 } from "../resolvers/types";
 
 export const event1 = {
@@ -19,6 +20,11 @@ export const event1 = {
   locationOn: false,
 };
 
+export const validResetPassword: ResetPasswordType = {
+  originalPassword: "password",
+  newPassword: "newpass",
+  confirmNewPassword: "newpass",
+};
 export const validUserForgetPassword: ForgetPasswordType = {
   username: "username",
   email: "testing@u.nus.edu",

@@ -119,3 +119,47 @@ export const deleteUser = async (
       },
     }
   );
+
+export const me = async (token: string = "") =>
+  axios.post(
+    API_URL,
+    {
+      query: `
+    query {
+      me {
+        id
+        username
+        firstName
+        lastName
+        email
+        gender
+        avatar
+        isVerified
+        dateJoined
+        birthday
+        location
+        profile {
+          id
+          rangeQuestions
+          eventPreferences
+          userHobbies
+          userFaculty
+          userYearOfStudy
+        }
+        groups
+        preferences {
+          lowerAge
+          upperAge
+          maxDistance
+        }
+        newUser
+        role
+      }
+    }`,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );

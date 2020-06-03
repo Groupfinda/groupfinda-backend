@@ -1,9 +1,10 @@
-import * as userApi from "./api";
-import { User, UserType } from "../models";
+import * as userApi from "./userApi";
+import { User, UserType, Profile } from "../models";
 import {
   validUser,
   validUserCredentials,
   validUserForgetPassword,
+  validResetPassword,
 } from "./data";
 import { mongoConnectWithRetry } from "../mongoose";
 import mongoose from "mongoose";
@@ -444,24 +445,23 @@ describe("Users", () => {
     newPassword: String!
     confirmNewPassword: String!
   ): Boolean!`, () => {
-    beforeAll(async () => {
+    beforeEach(async () => {
       await userApi.createUser(validUser);
+    });
+
+    afterEach(async () => {
+      await User.deleteMany({});
     });
 
     test("password is reset on successful entry", async () => {
       const token = (await userApi.loginUser(validUserCredentials)).data.data
         .loginUser.token;
 
-      const variables = {
-        originalPassword: validUser.password,
-        newPassword: "newpass",
-        confirmNewPassword: "newpass",
-      };
+      const variables = validResetPassword;
       const user = await User.findOne({ username: validUser.username });
       expect(await user?.comparePassword(validUser.password)).toBe(true);
 
       const result = await userApi.resetPassword(variables, token);
-      console.log(result.data);
       expect(result.data.data.resetPassword).toBe(true);
 
       const updatedUser = await User.findOne({ username: validUser.username });
@@ -471,7 +471,98 @@ describe("Users", () => {
 
       expect(await updatedUser?.comparePassword("newpass")).toBe(true);
     });
-  });
-});
 
-afterAll(() => mongoose.connection.close());
+    test("password is not reset when wrong original password is provided", async () => {
+      const token = (await userApi.loginUser(validUserCredentials)).data.data
+        .loginUser.token;
+
+      const variables = {
+        ...validResetPassword,
+        originalPassword: "wrongpass",
+      };
+
+      const result = await userApi.resetPassword(variables, token);
+      expect(result.data.errors[0].message).toBe("Password is incorrect");
+      expect(result.data.errors[0].extensions.invalidArgs).toContain(
+        "originalPassword"
+      );
+
+      const updatedUser = await User.findOne({ username: validUser.username });
+      expect(await updatedUser?.comparePassword(validUser.password)).toBe(true);
+      expect(
+        await updatedUser?.comparePassword(validResetPassword.newPassword)
+      ).toBe(false);
+    });
+
+    test("password is not reset on authentication fail (no token)", async () => {
+      const result = await userApi.resetPassword(validResetPassword, "");
+      expect(result.data.errors[0].message).toBe(
+        "Authentication as user failed"
+      );
+    });
+  });
+
+  describe("me: User", () => {
+    beforeAll(async () => {
+      await User.deleteMany({});
+      await Profile.deleteMany({});
+    });
+    test("creating user receives valid token for me query", async () => {
+      const token = (await userApi.createUser(validUser)).data.data.createUser
+        .token;
+
+      const user = (await userApi.me(token)).data.data.me;
+      expect(user.isVerified).toBe(false);
+      expect(user.role).toBe("USER");
+      expect(user.username).toBe(validUser.username);
+      expect(new Date(user.birthday)).toStrictEqual(validUser.birthday);
+      expect(user.email).toBe(validUser.email);
+      expect(user.firstName).toBe(validUser.firstName);
+      expect(user.gender).toBe(validUser.gender);
+      expect(user.lastName).toBe(validUser.lastName);
+      expect(user.newUser).toBe(true);
+
+      expect(user.profile.rangeQuestions.length).toBe(300);
+      expect(user.profile.userHobbies).toStrictEqual([]);
+      expect(user.profile.userFaculty).not.toBeTruthy();
+      expect(user.profile.userYearOfStudy).not.toBeTruthy();
+      expect(user.profile.eventPreferences).not.toBeTruthy();
+    });
+
+    test("logging in receives valid token for me query", async () => {
+      await userApi.createUser(validUser);
+
+      const token = (await userApi.loginUser(validUserCredentials)).data.data
+        .loginUser.token;
+
+      const user = (await userApi.me(token)).data.data.me;
+      expect(user.isVerified).toBe(false);
+      expect(user.role).toBe("USER");
+      expect(user.username).toBe(validUser.username);
+      expect(new Date(user.birthday)).toStrictEqual(validUser.birthday);
+      expect(user.email).toBe(validUser.email);
+      expect(user.firstName).toBe(validUser.firstName);
+      expect(user.gender).toBe(validUser.gender);
+      expect(user.lastName).toBe(validUser.lastName);
+      expect(user.newUser).toBe(true);
+
+      expect(user.profile.rangeQuestions.length).toBe(300);
+      expect(user.profile.userHobbies).toStrictEqual([]);
+      expect(user.profile.userFaculty).not.toBeTruthy();
+      expect(user.profile.userYearOfStudy).not.toBeTruthy();
+      expect(user.profile.eventPreferences).not.toBeTruthy();
+    });
+
+    test("me query returns null on no token", async () => {
+      const user = (await userApi.me()).data;
+      expect(user.data).toBeTruthy();
+      expect(user.data.me).toBe(null);
+    });
+    afterEach(async () => {
+      await User.deleteMany({});
+      await Profile.deleteMany({});
+    });
+  });
+
+  afterAll(() => mongoose.connection.close());
+});

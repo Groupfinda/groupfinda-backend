@@ -35,7 +35,7 @@ type Profile {
   id: ID!
   user: User!
   rangeQuestions: [Int]!
-  eventPreferences: JSON!
+  eventPreferences: JSON
   userHobbies: [String]!
   userFaculty: String
   userYearOfStudy: Int
