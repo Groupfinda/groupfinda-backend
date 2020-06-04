@@ -4,9 +4,9 @@ import questions from "./questions";
 const rawUser: RawUserType = {
   username: "username",
   password: "password",
-  firstName: "firstName",
-  lastName: "lastName",
-  email: "email",
+  firstName: "Peter",
+  lastName: "Tan",
+  email: "john@123.com",
   gender: "Male",
   avatar:
     "https://postmediacanoe.files.wordpress.com/2019/07/gettyimages-910314172-e1564420108411.jpg?w=840&h=630&crop=1&quality=80&strip=all",
@@ -30,8 +30,8 @@ const user = new User(rawUser);
 const rawProfile = {
   user: user["_id"],
   eventPreferences: {},
-  userHobbies: ["game"],
-  userFaculty: "COM",
+  userHobbies: ["Gaming"],
+  userFaculty: "Computing",
   userYearOfStudy: 1,
 };
 

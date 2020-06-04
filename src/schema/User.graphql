@@ -60,6 +60,22 @@ extend type Mutation {
   Search for a user by the username and deletes him and his profile
   """
   deleteUser(username: String!): Boolean!
+
+  """
+  Mutation to update a user's basic information based on optional fields
+  
+  Searches for a user and updates the relevant fields specified in argument
+  """
+  updateUserField(
+    firstName: String
+    lastName: String
+    birthday: Date
+    gender: String
+    avatar: String
+    lowerAge: Int
+    upperAge: Int
+    maxDistance: Int
+  ): Boolean!
 }
 
 """
