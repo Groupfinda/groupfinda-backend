@@ -9,7 +9,7 @@ import {
 } from "../models";
 import { combineResolvers } from "graphql-resolvers";
 import { isAuthenticated } from "./helpers/authorization";
-import { SubmitRangeQuestionType, updateProfileType } from "./types";
+import { SubmitRangeQuestionType, UpdateProfileType } from "./types";
 import {
   AuthenticationError,
   ApolloError,
@@ -32,18 +32,21 @@ const defaultResolver: IResolvers = {
     /**
      * Queries for user profile based on token obtained from headers
      */
-    getUserProfile: async (root: void, args: void, context): Promise<ProfileType> => {
-      const profile = await Profile.findOne({
-        user: context.currentUser.id,
-      }).exec();
-      if (!profile) throw new AuthenticationError("User is not valid");
+    getUserProfile: combineResolvers(
+      isAuthenticated,
+      async (root: void, args: void, context): Promise<ProfileType> => {
+        const profile = await Profile.findOne({
+          user: context.currentUser.id,
+        }).exec();
+        if (!profile) throw new AuthenticationError("User is not valid");
 
-      try {
-        return profile
-      } catch (err) {
-        throw new ApolloError(err.message);
+        try {
+          return profile;
+        } catch (err) {
+          throw new ApolloError(err.message);
+        }
       }
-    }
+    ),
   },
   Mutation: {
     /**
@@ -87,34 +90,29 @@ const defaultResolver: IResolvers = {
       isAuthenticated,
       async (
         root: void,
-        args: updateProfileType,
+        args: UpdateProfileType,
         context
       ): Promise<boolean> => {
         const profile = await Profile.findOne({
           user: context.currentUser.id,
         }).exec();
-        if (!profile) throw new AuthenticationError("User is not valid")
-        
-        if ('userHobbies' in args && args.userHobbies) {
-          profile.userHobbies = args.userHobbies;
-          profile.markModified("userHobbies");
-        }
-        if ('userFaculty' in args && args.userFaculty) {
-          profile.userFaculty = args.userFaculty
-          profile.markModified("userFaculty")
-        }
-        if ('userYearOfStudy' in args && args.userYearOfStudy) {
-          profile.userYearOfStudy = args.userYearOfStudy
-          profile.markModified("userYearOfStudy")
-        }
+        if (!profile) throw new AuthenticationError("User is not valid");
+
+        (Object.keys(args) as Array<keyof typeof args>).forEach((key) => {
+          if (args[key]) {
+            profile.set(key, args[key]);
+            profile.markModified(key);
+          }
+        });
+
         try {
-          await profile.save()
-          return true
+          await profile.save();
+          return true;
         } catch (err) {
-          throw new ApolloError(err.message)
-        }        
+          throw new ApolloError(err.message);
+        }
       }
-    )
+    ),
   },
   Profile: {
     user: async (root: ProfileType): Promise<UserType> => {

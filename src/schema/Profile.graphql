@@ -23,6 +23,7 @@ extend type Mutation {
 Type of RangeQuestion as according to MongoDB Schema
 """
 type RangeQuestion {
+  id: ID!
   content: String!
   order: Int!
 }
@@ -36,9 +37,10 @@ scalar JSON
 Type of Profile as according to MongoDB Schema
 """
 type Profile {
+  id: ID!
   user: User!
   rangeQuestions: [Int]!
-  eventPreferences: JSON!
+  eventPreferences: JSON
   userHobbies: [String]!
   userFaculty: String
   userYearOfStudy: Int
