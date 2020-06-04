@@ -15,7 +15,7 @@ import {
   ForgetPasswordType,
   ResetPasswordType,
   DeleteUserType,
-  updateUserType,
+  UpdateUserType,
 } from "./types";
 
 const userResolver: IResolvers = {
@@ -239,55 +239,25 @@ const userResolver: IResolvers = {
      */
     updateUserField: combineResolvers(
       isAuthenticated,
-      async (
-        root: void,
-        args: updateUserType,
-        context
-      ): Promise<boolean> => {
+      async (root: void, args: UpdateUserType, context): Promise<boolean> => {
         try {
-          const  user = await User.findById(
-            context.currentUser.id).exec();
+          const user = await User.findById(context.currentUser.id).exec();
           if (!user) throw new AuthenticationError("User not found");
-          
-          if ('firstName' in args) {
-            user.firstName = args.firstName
-            user.markModified("firstName")
-          }
-          if ('lastName' in args) {
-            user.lastName = args.lastName
-            user.markModified("lastName")
-          }
-          if ('birthday' in args) {
-            user.birthday = args.birthday
-            user.markModified("birthday")
-          }
-          if ('gender' in args) {
-            user.gender = args.gender
-            user.markModified("gender")
-          }
-          if ('avatar' in args) {
-            user.avatar = args.avatar
-            user.markModified("avatar")
-          }
-          if ('lowerAge' in args) {
-            user.preferences.lowerAge = args.lowerAge
-            user.markModified("preferences.lowerAge")
-          }
-          if ('upperAge' in args) {
-            user.preferences.upperAge = args.upperAge
-            user.markModified("preferences.upperAge")
-          }
-          if ('maxDistance' in args) {
-            user.preferences.maxDistance = args.maxDistance
-            user.markModified("preferences.maxDistance")
-          }
-          await user.save()
-          return true
+
+          (Object.keys(args) as Array<keyof typeof args>).forEach((key) => {
+            if (args[key]) {
+              user.set(key, args[key]);
+              user.markModified(key);
+            }
+          });
+
+          await user.save();
+          return true;
         } catch (err) {
-          throw new ApolloError(err.message)
+          throw new ApolloError(err.message);
         }
       }
-    )
+    ),
   },
   User: {
     profile: async (root: UserType): Promise<ProfileType> => {

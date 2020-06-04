@@ -5,6 +5,7 @@ import {
   ForgetPasswordType,
   ResetPasswordType,
   DeleteUserType,
+  UpdateUserType,
 } from "../resolvers/types";
 import { API_URL } from "./data";
 
@@ -154,6 +155,45 @@ export const me = async (token: string = "") =>
         role
       }
     }`,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+export const updateUserField = async (
+  variables: UpdateUserType,
+  token: string = ""
+) =>
+  axios.post(
+    API_URL,
+    {
+      query: `
+      mutation updateUserField(
+        $firstName: String
+        $lastName: String
+        $birthday: Date
+        $gender: String
+        $avatar: String
+        $lowerAge: Int
+        $upperAge: Int
+        $maxDistance: Int
+      ) {
+        updateUserField(
+          firstName: $firstName
+          lastName: $lastName
+          birthday: $birthday
+          gender: $gender
+          avatar: $avatar
+          lowerAge: $lowerAge
+          upperAge: $upperAge
+          maxDistance: $maxDistance
+        )
+      }
+              `,
+      variables,
     },
     {
       headers: {

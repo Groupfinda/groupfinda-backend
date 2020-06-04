@@ -559,5 +559,62 @@ describe("Users", () => {
     });
   });
 
+  describe(`updateUserField(
+    firstName: String
+    lastName: String
+    birthday: Date
+    gender: String
+    avatar: String
+    lowerAge: Int
+    upperAge: Int
+    maxDistance: Int
+  ): Boolean!`, () => {
+    beforeEach(async () => {
+      await User.deleteMany({});
+      await userApi.createUser(validUser);
+    });
+
+    test("updating a single user field is successful", async () => {
+      const token = (await userApi.loginUser(validUserCredentials)).data.data
+        .loginUser.token;
+      type Variable = {
+        [key: string]: any;
+      };
+      let user = await User.findOne({});
+      expect(user?.firstName).toBe(validUser.firstName);
+      let variables: Variable = { firstName: "Changed" };
+      const result = await userApi.updateUserField(variables, token);
+      expect(result.data.data.updateUserField).toBe(true);
+      user = await User.findOne({});
+      expect(user?.firstName).toBe("Changed");
+
+      variables = { lastName: "Changed2" };
+      await userApi.updateUserField(variables, token);
+      user = await User.findOne({});
+      expect(user?.lastName).toBe("Changed2");
+    });
+
+    test("updating multiple user fields is successful", async () => {
+      const token = (await userApi.loginUser(validUserCredentials)).data.data
+        .loginUser.token;
+      type Variable = {
+        [key: string]: any;
+      };
+      let variables: Variable = {
+        firstName: "MultipleChange",
+        lastName: "MultipleChange2",
+      };
+      let user = await User.findOne({});
+      expect(user?.firstName).not.toBe("MultipleChange");
+      expect(user?.lastName).not.toBe("MultipleChange2");
+
+      const result = await userApi.updateUserField(variables, token);
+      expect(result.data.data.updateUserField).toBe(true);
+      user = await User.findOne({});
+      expect(user?.firstName).toBe("MultipleChange");
+      expect(user?.lastName).toBe("MultipleChange2");
+    });
+  });
+
   afterAll(() => mongoose.connection.close());
 });
