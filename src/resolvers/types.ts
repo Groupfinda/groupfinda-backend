@@ -69,3 +69,20 @@ export type SubmitRangeQuestionType = {
 export type GetEventType = {
   eventId: string;
 };
+
+export type updateProfileType = {
+  userHobbies: string[];
+  userFaculty: string;
+  userYearOfStudy: number;
+};
+
+export type updateUserType = {
+  firstName: string;
+  lastName: string;
+  birthday: Date;
+  gender: string;
+  avatar: string;
+  lowerAge: number;
+  upperAge: number;
+  maxDistance: number;
+};

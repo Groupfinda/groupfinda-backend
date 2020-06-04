@@ -4,6 +4,7 @@ extend type Query {
   Returns all 300 Range Questions in the database
   """
   getAllRangeQuestions: [RangeQuestion]!
+  getUserProfile: Profile!
 }
 
 extend type Mutation {
@@ -12,6 +13,10 @@ extend type Mutation {
   and the value to fill it up with (0 is not filled, 1-5 is filled)
   """
   submitRangeQuestion(order: Int!, value: Int!): [Int]!
+  updateProfileField(
+    userHobbies: [String],
+    userFaculty: String,
+    userYearOfStudy: Int): Boolean!
 }
 
 """
