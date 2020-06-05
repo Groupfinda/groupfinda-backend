@@ -1,5 +1,9 @@
+require("dotenv").config();
+
 const NODE_ENV = process.env.NODE_ENV;
 const PORT = process.env.PORT;
+const S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID as string;
+const S3_SECRET_ACCESS_KEY = process.env.S3_SECRET_ACCESS_KEY as string;
 
 let MONGO_HOST: string | undefined;
 let MONGO_PORT: string | undefined;
@@ -30,4 +34,6 @@ export default {
   MONGO_PORT,
   MONGO_DATABASE,
   TOKEN_SECRET,
+  S3_ACCESS_KEY_ID,
+  S3_SECRET_ACCESS_KEY,
 };

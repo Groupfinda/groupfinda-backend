@@ -3,12 +3,21 @@ import { IResolvers } from "graphql-tools";
 import { GraphQLScalarType } from "graphql";
 import { Kind } from "graphql/language";
 import { JSONResolver } from "graphql-scalars";
+import { getPresignedUploadURL } from "../aws-setup";
+import { combineResolvers } from "graphql-resolvers";
+import { isAuthenticated } from "./helpers/authorization";
 
 const defaultResolver: IResolvers = {
   Query: {
     helloWorld(_: void, args: void): string {
       return "👋 Hello world! 👋";
     },
+    getPresignedURL: combineResolvers(
+      isAuthenticated,
+      (_: void, args: { key: string }): string => {
+        return getPresignedUploadURL(args.key);
+      }
+    ),
   },
   Mutation: {
     refetchQuery(): string {
