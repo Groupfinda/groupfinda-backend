@@ -12,17 +12,22 @@ const defaultResolver: IResolvers = {
     helloWorld(_: void, args: void): string {
       return "👋 Hello world! 👋";
     },
-    getPresignedURL: combineResolvers(
-      isAuthenticated,
-      (_: void, args: { key: string }): string => {
-        return getPresignedUploadURL(args.key);
-      }
-    ),
   },
   Mutation: {
     refetchQuery(): string {
       return "Refetching";
     },
+    getPresignedURL: combineResolvers(
+      isAuthenticated,
+      (_: void, args: { key: string }, context): any => {
+        const urlData = getPresignedUploadURL(
+          `users/${context.currentUser.id}/${args.key}`,
+          `image`
+        );
+
+        return urlData;
+      }
+    ),
   },
   Date: new GraphQLScalarType({
     name: "Date",

@@ -10,10 +10,16 @@ AWS.config.update({ credentials: credentials, region: "ap-southeast-1" });
 
 const s3 = new AWS.S3();
 
-export const getPresignedUploadURL = (key: string) => {
-  return s3.getSignedUrl("putObject", {
+export const getPresignedUploadURL = (key: string, contentType: string) => {
+  const params = {
+    Expires: 600,
     Bucket: "groupfinda",
-    Expires: 1800,
-    Key: key,
-  });
+    Conditions: [["content-length-range", 100, 10000000]],
+    Fields: {
+      "Content-Type": contentType,
+      key,
+    },
+  };
+
+  return s3.createPresignedPost(params);
 };

@@ -1,10 +1,10 @@
 type Query {
   helloWorld: String!
-  getPresignedURL(key: String!): String!
 }
 
 type Mutation {
   refetchQuery: String!
+  getPresignedURL(key: String!): JSON!
 }
 
 scalar Date
