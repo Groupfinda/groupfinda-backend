@@ -70,7 +70,7 @@ const eventResolver: IResolvers = {
           !args.title ||
           !args.description ||
           !args.groupSize ||
-          !args.category
+          args.category.length === 0
         ) {
           throw new UserInputError("Input fields must not be empty", {
             invalidArgs: extractEmptyFields(args),
@@ -99,7 +99,9 @@ const eventResolver: IResolvers = {
       isAuthenticated,
       async (_, args: RegisterEventType, context): Promise<EventType> => {
         if (!args.eventId) throw new UserInputError("Invalid ID");
+
         const event = await Event.findById(args.eventId);
+
         if (!event) {
           throw new ForbiddenError("No such event found");
         }
