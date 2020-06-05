@@ -82,9 +82,8 @@ const eventResolver: IResolvers = {
           ...args,
           eventCode,
           owner: context.currentUser.id,
-          images: args.images.map(
-            (image) =>
-              `${config.BUCKET_URL}users/${context.currentUser.id}/${image}`
+          images: args.images.map((image) =>
+            config.ImageURLCreator(context.currentUser.id, image)
           ),
         });
         const savedEvent = await event.save();

@@ -41,9 +41,7 @@ export const validEvent: CreateEventType = {
   recurringMode: false,
   dateOfEvent: new Date("2020-5-31"),
   dateLastRegister: new Date("2020-5-29"),
-  images: [
-    "https://corp.gametize.com/wp-content/uploads/2014/07/events-heavenly-header.jpg",
-  ],
+  images: ["fun.jpg"],
   private: false,
   groupSize: 4,
   category: ["fun"],
@@ -60,9 +58,7 @@ export const validEvent2: CreateEventType = {
   recurringMode: false,
   dateOfEvent: new Date("2020-5-31"),
   dateLastRegister: new Date("2020-5-29"),
-  images: [
-    "https://corp.gametize.com/wp-content/uploads/2014/07/events-heavenly-header.jpg",
-  ],
+  images: ["fun.jpg"],
   private: false,
   groupSize: 4,
   category: ["fun"],

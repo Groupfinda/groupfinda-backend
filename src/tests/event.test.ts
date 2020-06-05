@@ -9,6 +9,7 @@ import {
 } from "./data";
 import { mongoConnectWithRetry } from "../mongoose";
 import mongoose from "mongoose";
+import config from "../config";
 
 beforeAll(async () => {
   mongoConnectWithRetry();
@@ -136,7 +137,7 @@ describe("Events", () => {
         new Date(result.data.data.createEvent.dateLastRegister)
       ).toStrictEqual(validEvent.dateLastRegister);
       expect(result.data.data.createEvent.images).toStrictEqual(
-        validEvent.images
+        validEvent.images.map((image) => config.ImageURLCreator(me.id, image))
       );
       expect(result.data.data.createEvent.private).toBe(validEvent.private);
       expect(result.data.data.createEvent.groupSize).toBe(validEvent.groupSize);

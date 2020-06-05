@@ -4,7 +4,10 @@ const NODE_ENV = process.env.NODE_ENV;
 const PORT = process.env.PORT;
 const S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID as string;
 const S3_SECRET_ACCESS_KEY = process.env.S3_SECRET_ACCESS_KEY as string;
-const BUCKET_URL = "https://groupfinda.s3-ap-southeast-1.amazonaws.com/";
+const BUCKET_URL = process.env.BUCKET_URL;
+
+const ImageURLCreator = (id: string, imageName: string) =>
+  `${BUCKET_URL}/users/${id}/${imageName}`;
 
 let MONGO_HOST: string | undefined;
 let MONGO_PORT: string | undefined;
@@ -38,4 +41,5 @@ export default {
   S3_ACCESS_KEY_ID,
   S3_SECRET_ACCESS_KEY,
   BUCKET_URL,
+  ImageURLCreator,
 };
