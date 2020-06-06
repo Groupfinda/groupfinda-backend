@@ -15,6 +15,10 @@ beforeAll(async () => {
   await mongoConnectWithRetry();
 });
 
+test("Sanity check", async () => {
+  const response = await userApi.helloWorld();
+  expect(response.data.data.helloWorld).toBe("👋 Hello world! 👋");
+});
 describe("Users", () => {
   describe(`createUser(
     username: String!

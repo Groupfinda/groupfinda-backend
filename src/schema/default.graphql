@@ -4,6 +4,7 @@ type Query {
 
 type Mutation {
   refetchQuery: String!
+  getPresignedURL(key: String!): JSON!
 }
 
 scalar Date

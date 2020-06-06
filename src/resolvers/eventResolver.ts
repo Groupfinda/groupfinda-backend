@@ -13,6 +13,7 @@ import {
   GetEventType,
 } from "./types";
 import { UserInputError, ForbiddenError } from "apollo-server-express";
+import config from "../config";
 
 const eventResolver: IResolvers = {
   Query: {
@@ -81,6 +82,9 @@ const eventResolver: IResolvers = {
           ...args,
           eventCode,
           owner: context.currentUser.id,
+          images: args.images.map((image) =>
+            config.ImageURLCreator(context.currentUser.id, image)
+          ),
         });
         const savedEvent = await event.save();
         return savedEvent;
