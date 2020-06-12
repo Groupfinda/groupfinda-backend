@@ -11,6 +11,11 @@ extend type Query {
   Get a particular event through the ID. Either returns an Event or null
   """
   getEvent(eventId: ID!): Event
+
+  """
+  Get a list of events for swiping
+  """
+  getSwipeEvents: [Event]!
 }
 
 extend type Mutation {
@@ -42,6 +47,10 @@ extend type Mutation {
   Unregister event for a user. Requires authentication. Will not work if user is not registered
   """
   unregisterEvent(eventId: String!): Event!
+  """
+  View an event. Has to be 'LIKE' or 'DISLIKE' for type argument.
+  """
+  viewEvent(eventId: String!, type: String!): Boolean!
   """
   Delete all events for testing purposes
   """
