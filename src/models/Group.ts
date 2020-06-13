@@ -9,6 +9,7 @@ export interface RawGroupType {
   preferences: {
     lowerAge: number;
     upperAge: number;
+    maxDistance: number;
   };
   messageRoom: MessageRoomType["_id"];
 }

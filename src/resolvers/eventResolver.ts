@@ -1,6 +1,6 @@
 // resolverMap.ts
 import { IResolvers } from "graphql-tools";
-import { EventType, Event, UserType, Profile } from "../models";
+import { EventType, Event, User, UserType, Profile } from "../models";
 
 import { combineResolvers } from "graphql-resolvers";
 import { isAuthenticated } from "./helpers/authorization";
@@ -147,7 +147,7 @@ const eventResolver: IResolvers = {
 
         event.registeredUsers.push(context.currentUser.id);
         const profile = await pquery;
-
+        
         if (!profile) {
           throw new ApolloError("User not found");
         }
@@ -159,17 +159,29 @@ const eventResolver: IResolvers = {
 
         profile.eventPreferences = preferences;
         profile.markModified("eventPreferences");
+        
+        const user = await User.findById(context.currentUser.id).exec();
+        if (!user) {
+          throw new ApolloError("User not valid")
+        }
+
         await axios.post("http://python-backend:5000/match", {
           "userId": context.currentUser.id,
           "groupSize": event.groupSize,
           "eventId": args.eventId
         }).then((data: any) => {
-          console.log(data)
+          user.groups.push(data.data.groupId)
+          if (data.data.members.length >= event.groupSize) {
+            console.log("Group is full")
+            // Push notifications here because group is full/completed
+          }
         }).catch((err: any) => {
           console.log(err)
+          throw new ApolloError("Error creating/adding user group")
         })
         await profile.save();
-        await event.save()
+        await event.save();
+        await user.save();
         return event;
       }
     ),
