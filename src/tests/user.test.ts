@@ -525,7 +525,7 @@ describe("Users", () => {
       expect(user.profile.userHobbies).toStrictEqual([]);
       expect(user.profile.userFaculty).not.toBeTruthy();
       expect(user.profile.userYearOfStudy).not.toBeTruthy();
-      expect(user.profile.eventPreferences).not.toBeTruthy();
+      expect(user.profile.eventPreferences).toStrictEqual({});
     });
 
     test("logging in receives valid token for me query", async () => {
@@ -549,7 +549,7 @@ describe("Users", () => {
       expect(user.profile.userHobbies).toStrictEqual([]);
       expect(user.profile.userFaculty).not.toBeTruthy();
       expect(user.profile.userYearOfStudy).not.toBeTruthy();
-      expect(user.profile.eventPreferences).not.toBeTruthy();
+      expect(user.profile.eventPreferences).toStrictEqual({});
     });
 
     test("me query returns null on no token", async () => {

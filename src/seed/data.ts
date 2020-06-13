@@ -1,5 +1,6 @@
 import { RawUserType, User, Profile, RangeQuestion, Event } from "../models";
 import questions from "./questions";
+import events from "./events";
 
 const rawUser: RawUserType = {
   username: "username",
@@ -27,6 +28,7 @@ const rawUser: RawUserType = {
 
 const user = new User(rawUser);
 
+const eventData = events.map((event) => ({ ...event, owner: user.id }));
 const rawProfile = {
   user: user["_id"],
   eventPreferences: {},
@@ -35,35 +37,12 @@ const rawProfile = {
   userYearOfStudy: 1,
 };
 
-const rawEvent = {
-  title: "My Event",
-  description: "At this event people can do whatever they want",
-  recurringMode: false,
-  dateOfEvent: new Date("2020-5-31"),
-  dateLastRegister: new Date("2020-5-29"),
-  images: [
-    "https://corp.gametize.com/wp-content/uploads/2014/07/events-heavenly-header.jpg",
-  ],
-  private: false,
-  groupSize: 4,
-  category: ["fun"],
-  locationOn: false,
-  owner: user.id,
-  eventCode: "123456",
-  location: {
-    address: "NUS",
-    postalCode: 123456,
-  },
-};
-
 const profile = new Profile(rawProfile);
 user.profile = profile["_id"];
-
-const event = new Event(rawEvent);
 
 export default async () => {
   await RangeQuestion.insertMany(questions);
   await user.save();
   await profile.save();
-  await event.save();
+  await Event.insertMany(eventData);
 };

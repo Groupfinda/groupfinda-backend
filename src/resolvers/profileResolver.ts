@@ -6,6 +6,7 @@ import {
   Profile,
   RangeQuestionType,
   RangeQuestion,
+  EventType,
 } from "../models";
 import { combineResolvers } from "graphql-resolvers";
 import { isAuthenticated } from "./helpers/authorization";
@@ -117,6 +118,17 @@ const defaultResolver: IResolvers = {
   Profile: {
     user: async (root: ProfileType): Promise<UserType> => {
       return (await root.populate("user").execPopulate()).user;
+    },
+    eventsLiked: async (root: ProfileType): Promise<EventType[]> => {
+      return (await root.populate("eventsLiked").execPopulate()).eventsLiked;
+    },
+    eventsDisliked: async (root: ProfileType): Promise<EventType[]> => {
+      return (await root.populate("eventsDisliked").execPopulate())
+        .eventsDisliked;
+    },
+    eventsRegistered: async (root: ProfileType): Promise<EventType[]> => {
+      return (await root.populate("eventsRegistered").execPopulate())
+        .eventsRegistered;
     },
   },
 };
