@@ -14,6 +14,7 @@ import {
 } from "./types";
 import { UserInputError, ForbiddenError } from "apollo-server-express";
 import config from "../config";
+import axios from "axios";
 
 const eventResolver: IResolvers = {
   Query: {
@@ -109,6 +110,15 @@ const eventResolver: IResolvers = {
             `User is already registered for event ${event.title}`
           );
         }
+        axios.post("http://python-backend:5000/match", {
+          "userId": context.currentUser.id,
+          "groupSize": event.groupSize,
+          "eventId": args.eventId
+        }).then((data: any) => {
+          console.log(data)
+        }).catch((err: any) => {
+          console.log(err)
+        })
         event.registeredUsers.push(context.currentUser.id);
         return await event.save();
       }
