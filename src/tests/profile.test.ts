@@ -41,7 +41,9 @@ describe("Profile", () => {
       expect(result.data.data.getUserProfile.rangeQuestions).toStrictEqual(
         new Array(300).fill(0)
       );
-      expect(result.data.data.getUserProfile.eventPreferences).not.toBeTruthy();
+      expect(result.data.data.getUserProfile.eventPreferences).toStrictEqual(
+        {}
+      );
       expect(result.data.data.getUserProfile.userHobbies).toStrictEqual([]);
       expect(result.data.data.getUserProfile.userFaculty).not.toBeTruthy();
       expect(result.data.data.getUserProfile.userYearOfStudy).not.toBeTruthy();

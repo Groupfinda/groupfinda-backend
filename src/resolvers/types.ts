@@ -56,6 +56,11 @@ export type UnregisterEventType = {
   eventId: string;
 };
 
+export type ViewEventType = {
+  eventId: string;
+  type: "LIKE" | "DISLIKE";
+};
+
 export type SearchEventType = {
   searchTerm?: string;
   eventCode?: string;

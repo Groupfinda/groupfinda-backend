@@ -13,3 +13,42 @@ export const generateRandomCode = (length: number): string => {
   }
   return result;
 };
+
+type UserPreferences = {
+  [key: string]: number;
+};
+
+export const incrementPreferences = (
+  userPref: UserPreferences,
+  categories: string[]
+): UserPreferences => {
+  const preferences = userPref;
+
+  categories.forEach((cat) => {
+    const catToLower = cat.toLowerCase();
+    if (!preferences[catToLower]) {
+      preferences[catToLower] = 1;
+    } else {
+      preferences[catToLower] = preferences[catToLower] + 1;
+    }
+  });
+
+  return preferences;
+};
+
+export const decrementPreferences = (
+  userPref: UserPreferences,
+  categories: string[]
+): UserPreferences => {
+  const preferences = userPref;
+  categories.forEach((cat) => {
+    const catToLower = cat.toLowerCase();
+    if (!preferences[catToLower]) {
+      preferences[catToLower] = -1;
+    } else {
+      preferences[catToLower] = preferences[catToLower] - 1;
+    }
+  });
+
+  return preferences;
+};

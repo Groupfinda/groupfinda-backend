@@ -1,18 +1,28 @@
 // resolverMap.ts
 import { IResolvers } from "graphql-tools";
-import { EventType, Event, UserType } from "../models";
+import { EventType, Event, UserType, Profile } from "../models";
 
 import { combineResolvers } from "graphql-resolvers";
 import { isAuthenticated } from "./helpers/authorization";
-import { extractEmptyFields, generateRandomCode } from "./helpers/util";
+import {
+  extractEmptyFields,
+  generateRandomCode,
+  incrementPreferences,
+  decrementPreferences,
+} from "./helpers/util";
 import {
   CreateEventType,
   RegisterEventType,
   UnregisterEventType,
   SearchEventType,
   GetEventType,
+  ViewEventType,
 } from "./types";
-import { UserInputError, ForbiddenError } from "apollo-server-express";
+import {
+  UserInputError,
+  ForbiddenError,
+  ApolloError,
+} from "apollo-server-express";
 import config from "../config";
 
 const eventResolver: IResolvers = {
@@ -57,6 +67,26 @@ const eventResolver: IResolvers = {
         throw new ForbiddenError(err.message);
       }
     },
+    /**
+     * Gets a list of swipable events which are filtered based on what
+     * the user has already seen
+     */
+    getSwipeEvents: combineResolvers(
+      isAuthenticated,
+      async (_: void, __: void, context): Promise<EventType[]> => {
+        const profile = await Profile.findOne({
+          user: context.currentUser.id,
+        }).exec();
+        if (!profile) {
+          throw new ApolloError("User not found");
+        }
+        const allEvents = profile?.eventsLiked
+          .concat(profile.eventsDisliked)
+          .concat(profile.eventsRegistered);
+        const events = await Event.find({ _id: { $nin: allEvents } });
+        return events;
+      }
+    ),
   },
   Mutation: {
     /**
@@ -93,12 +123,16 @@ const eventResolver: IResolvers = {
     /**
      * Register for an event.
      * User must be authenticated in order to carry out this action
+     * Event is added to user eventRegistered array
+     * User is added to event registeredUser array
+     * User preferences in profile updated
      */
+
     registerEvent: combineResolvers(
       isAuthenticated,
       async (_, args: RegisterEventType, context): Promise<EventType> => {
         if (!args.eventId) throw new UserInputError("Invalid ID");
-
+        const pquery = Profile.findOne({ user: context.currentUser.id }).exec();
         const event = await Event.findById(args.eventId);
 
         if (!event) {
@@ -109,18 +143,37 @@ const eventResolver: IResolvers = {
             `User is already registered for event ${event.title}`
           );
         }
+
         event.registeredUsers.push(context.currentUser.id);
+        const profile = await pquery;
+
+        if (!profile) {
+          throw new ApolloError("User not found");
+        }
+        profile.eventsRegistered.push(event.id);
+        const preferences = incrementPreferences(
+          profile.eventPreferences,
+          event.category
+        );
+
+        profile.eventPreferences = preferences;
+        profile.markModified("eventPreferences");
+        await profile.save();
         return await event.save();
       }
     ),
     /**
      * Unregister for an event.
      * User must be authenticated in order to carry out this action
+     * Event is removed from user eventRegistered array
+     * User is removed from event registeredUser array
+     * User preferences in profile updated
      */
     unregisterEvent: combineResolvers(
       isAuthenticated,
       async (_, args: UnregisterEventType, context): Promise<EventType> => {
         if (!args.eventId) throw new UserInputError("Invalid ID");
+        const pquery = Profile.findOne({ user: context.currentUser.id }).exec();
         const event = await Event.findById(args.eventId);
         if (!event) {
           throw new ForbiddenError("No such event found");
@@ -134,10 +187,83 @@ const eventResolver: IResolvers = {
         const newRegisteredUsers = event.registeredUsers.filter(
           (id) => id.toString() !== context.currentUser.id.toString()
         );
-
         event.registeredUsers = newRegisteredUsers;
+        const profile = await pquery;
+        if (!profile) {
+          throw new ApolloError("User not found");
+        }
+        const newRegisteredEvents = profile.eventsRegistered.filter(
+          (id) => id.toString() !== args.eventId.toString()
+        );
+        profile.eventsRegistered = newRegisteredEvents;
+
+        const preferences = decrementPreferences(
+          profile.eventPreferences,
+          event.category
+        );
+
+        profile.eventPreferences = preferences;
+        profile.markModified("eventPreferences");
+        await profile.save();
         const savedEvent = await event.save();
         return savedEvent;
+      }
+    ),
+    /**
+     * Like/Dislike an event
+     * Updates profile eventPreferences accordingly
+     * Adds event id to dislike / like array
+     */
+    viewEvent: combineResolvers(
+      isAuthenticated,
+      async (_: void, args: ViewEventType, context): Promise<boolean> => {
+        const profile = await Profile.findOne({ user: context.currentUser.id });
+        if (!profile) {
+          throw new ApolloError("User not found");
+        }
+        const { eventId, type } = args;
+        const event = await Event.findById(eventId);
+        if (!event) {
+          throw new ApolloError("Error: Event not found");
+        }
+
+        const allEvents = profile.eventsDisliked
+          .concat(profile.eventsLiked)
+          .concat(profile.eventsRegistered);
+        if (allEvents.includes(eventId.toString())) {
+          throw new ApolloError("User has already seen this event");
+        }
+        switch (type) {
+          case "LIKE": {
+            profile.eventsLiked.push(eventId);
+            const preferences = incrementPreferences(
+              profile.eventPreferences,
+              event.category
+            );
+            profile.eventPreferences = preferences;
+            profile.markModified("eventPreferences");
+            break;
+          }
+          case "DISLIKE": {
+            profile.eventsDisliked.push(eventId);
+            const preferences = decrementPreferences(
+              profile.eventPreferences,
+              event.category
+            );
+            profile.eventPreferences = preferences;
+            profile.markModified("eventPreferences");
+            break;
+          }
+          default:
+            throw new ApolloError("Error: Type not specified");
+        }
+
+        try {
+          await profile.save();
+          return true;
+        } catch (err) {
+          throw new ApolloError(err);
+        }
       }
     ),
     /**
