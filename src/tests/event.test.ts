@@ -396,6 +396,23 @@ describe("Events", () => {
         "Authentication as user failed"
       );
     });
+    test.todo("registering for event should increase preferences");
+    test.todo("unregistering for event should decrease preferences");
+  });
+
+  describe("viewEvent(eventId: String!, type: String!): Boolean!", () => {
+    test.todo("liking event should increase preferences");
+    test.todo("disliking event should decrease preferences");
+    test.todo("liking event twice should be error");
+    test.todo("disliking event twice should be error");
+  });
+
+  describe("getSwipeEvents: [Event]!", () => {
+    test.todo("initially returns all events");
+    test.todo("liking event causes event not to show up");
+    test.todo("disliking event causes event not to show up");
+    test.todo("register event causes event not to show up");
+    test.todo("register event then unregister causes event to show up");
   });
 });
 

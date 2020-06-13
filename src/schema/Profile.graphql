@@ -14,9 +14,10 @@ extend type Mutation {
   """
   submitRangeQuestion(order: Int!, value: Int!): [Int]!
   updateProfileField(
-    userHobbies: [String],
-    userFaculty: String,
-    userYearOfStudy: Int): Boolean!
+    userHobbies: [String]
+    userFaculty: String
+    userYearOfStudy: Int
+  ): Boolean!
 }
 
 """
@@ -44,4 +45,7 @@ type Profile {
   userHobbies: [String]!
   userFaculty: String
   userYearOfStudy: Int
+  eventsLiked: [Event]
+  eventsDisliked: [Event]
+  eventsRegistered: [Event]
 }

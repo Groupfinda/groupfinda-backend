@@ -1,0 +1,81 @@
+export default [
+  {
+    title: "My Event",
+    description: "At this event people can do whatever they want",
+    recurringMode: false,
+    dateOfEvent: new Date("2020-5-31"),
+    dateLastRegister: new Date("2020-5-29"),
+    images: [
+      "https://corp.gametize.com/wp-content/uploads/2014/07/events-heavenly-header.jpg",
+    ],
+    private: false,
+    groupSize: 4,
+    category: ["fun"],
+    locationOn: false,
+    eventCode: "123456",
+    location: {
+      address: "NUS",
+      postalCode: 123456,
+    },
+  },
+  {
+    title: "Coding",
+    description: "Code all day in your room for Orbital",
+    recurringMode: false,
+    dateOfEvent: new Date("2020-5-31"),
+    dateLastRegister: new Date("2020-5-29"),
+    images: [
+      "https://www.humanesociety.org/sites/default/files/styles/1240x698/public/2018/08/kitten-440379.jpg?h=c8d00152&itok=1fdekAh2",
+    ],
+    private: false,
+    groupSize: 4,
+    category: ["fun", "yay"],
+    locationOn: false,
+    eventCode: "123456",
+    location: {
+      address: "NUS",
+      postalCode: 123456,
+    },
+  },
+  {
+    title: "Even more coding",
+    description:
+      "Code all day in your room for Orbital but with a special twist!",
+    recurringMode: false,
+    dateOfEvent: new Date("2020-5-31"),
+    dateLastRegister: new Date("2020-5-29"),
+    images: [
+      "https://static.toiimg.com/photo/msid-67586673/67586673.jpg?3918697",
+      "https://postmediatorontosun.files.wordpress.com/2019/12/cat-e1575303121192.jpg",
+    ],
+    private: false,
+    groupSize: 4,
+    category: ["fun", "yay", "woohoo"],
+    locationOn: false,
+    eventCode: "123456",
+    location: {
+      address: "NUS",
+      postalCode: 123456,
+    },
+  },
+  {
+    title: "Get tilted",
+    description: "Self-explanatory",
+    recurringMode: false,
+    dateOfEvent: new Date("2020-5-31"),
+    dateLastRegister: new Date("2020-5-29"),
+    images: [
+      "https://cdn.mos.cms.futurecdn.net/VSy6kJDNq2pSXsCzb6cvYF.jpg",
+      "https://postmediatorontosun.files.wordpress.com/2019/12/cat-e1575303121192.jpg",
+    ],
+    private: false,
+    groupSize: 4,
+    category: ["fun", "yay", "woohoo"],
+    locationOn: false,
+    eventCode: "123456",
+    location: {
+      address: "NUS",
+      postalCode: 123456,
+    },
+  },
+];
