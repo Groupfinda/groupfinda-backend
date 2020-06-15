@@ -24,6 +24,7 @@ import {
   ApolloError,
 } from "apollo-server-express";
 import config from "../config";
+import axios from "axios";
 
 const eventResolver: IResolvers = {
   Query: {
@@ -158,8 +159,20 @@ const eventResolver: IResolvers = {
 
         profile.eventPreferences = preferences;
         profile.markModified("eventPreferences");
+
+        axios
+          .post("http://python-backend:5000/match", {
+            userId: context.currentUser.id,
+            groupSize: event.groupSize,
+            eventId: args.eventId,
+          })
+          .catch((err: any) => {
+            console.log(err);
+            throw new ApolloError("Error creating/adding user group");
+          });
         await profile.save();
-        return await event.save();
+        await event.save();
+        return event;
       }
     ),
     /**

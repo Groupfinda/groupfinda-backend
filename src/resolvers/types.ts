@@ -91,3 +91,7 @@ export type UpdateUserType = {
   upperAge?: number;
   maxDistance?: number;
 };
+
+export type GetGroupType = {
+  eventId?: string;
+};

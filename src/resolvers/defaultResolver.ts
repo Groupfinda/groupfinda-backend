@@ -6,12 +6,29 @@ import { JSONResolver } from "graphql-scalars";
 import { getPresignedUploadURL } from "../aws-setup";
 import { combineResolvers } from "graphql-resolvers";
 import { isAuthenticated } from "./helpers/authorization";
+import axios from "axios";
 
 const defaultResolver: IResolvers = {
   Query: {
     helloWorld(_: void, args: void): string {
+      axios.get("http://python-backend:5000/")
+        .then((res:any)=>console.log(res))
+        .catch(err=>console.log(err))
       return "👋 Hello world! 👋";
     },
+    pythonTest: async(root: void, args:void, context): Promise<any> => {
+      return axios.get("http://python-backend:5000/").then((data: any) => data.data);
+    },
+    postTest: async(root: void, args:void, context): Promise<boolean> => {
+      return axios.post("http://python-backend:5000/match", {
+        "userId": context.currentUser.id,
+        "groupSize": 4,
+        "eventId": "eventIDASDAD"
+      }).then((data: any) => {
+        console.log(data.data)
+        return true
+      })
+    }
   },
   Mutation: {
     refetchQuery(): string {
