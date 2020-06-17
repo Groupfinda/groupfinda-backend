@@ -1,0 +1,21 @@
+extend type Query {
+  getMessageRoom(id: ID!): MessageRoom
+}
+
+extend type Mutation {
+  sendMessage(messageRoomId: ID!, message: String!): Boolean!
+}
+
+type MessageRoom {
+  id: ID!
+  messages: [Message]!
+  group: Group!
+  dateCreated: Date!
+}
+
+type Message {
+  _id: ID!
+  user: User!
+  createdAt: Date!
+  text: String!
+}

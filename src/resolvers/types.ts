@@ -1,3 +1,5 @@
+import { UserType } from "../models";
+
 export type CreateUserType = {
   username: string;
   password: string;
@@ -94,4 +96,19 @@ export type UpdateUserType = {
 
 export type GetGroupType = {
   eventId?: string;
+};
+
+export type GetMessageRoomType = {
+  id: string;
+};
+
+export type SendMessageType = {
+  messageRoomId: string;
+  message: string;
+};
+
+export type MessageType = {
+  user: UserType;
+  createdAt: Date;
+  text: string;
 };

@@ -63,7 +63,7 @@ extend type Mutation {
 
   """
   Mutation to update a user's basic information based on optional fields
-  
+
   Searches for a user and updates the relevant fields specified in argument
   """
   updateUserField(
@@ -113,7 +113,7 @@ type User {
   birthday: Date!
   location: String
   profile: Profile!
-  groups: [ID]!
+  groups: [Group]!
   preferences: Preferences
   newUser: Boolean!
   role: String!

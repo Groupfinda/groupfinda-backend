@@ -3,9 +3,9 @@ import { UserType, GroupType } from "./";
 
 //Type for Message
 type Message = {
-  userId: UserType["_id"];
-  timestamp: Date;
-  message: string;
+  user: UserType["_id"];
+  createdAt: Date;
+  text: string;
 };
 
 //Interface for MessageRoom type without mongoDB
@@ -19,16 +19,19 @@ export interface RawMessageRoomType {
 export interface MessageRoomType extends Document, RawMessageRoomType {}
 
 const MessageRoomSchema: Schema = new mongoose.Schema({
-  messages: [
-    {
-      userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+  messages: {
+    type: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        createdAt: Date,
+        text: String,
       },
-      timestamp: Date,
-      message: String,
-    },
-  ],
+    ],
+    default: [],
+  },
   group: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Group",
