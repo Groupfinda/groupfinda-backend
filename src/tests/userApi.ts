@@ -145,7 +145,19 @@ export const me = async (token: string = "") =>
           userFaculty
           userYearOfStudy
         }
-        groups
+        groups {
+          id
+          event {
+            id
+          }
+          members
+          dateCreated
+          preferences {
+            lowerAge
+            upperAge
+          }
+          messageRoom
+        }
         preferences {
           lowerAge
           upperAge
