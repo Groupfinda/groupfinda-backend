@@ -1,10 +1,13 @@
 // resolverMap.ts
 import { IResolvers } from "graphql-tools";
 import { GroupType, MessageRoom, MessageRoomType } from "../models";
-import { GetMessageRoomType, SendMessageType, MessageType } from "./types";
+import { GetMessageRoomType, SendMessageType } from "./types";
 import { combineResolvers } from "graphql-resolvers";
 import { isAuthenticated } from "./helpers/authorization";
 import { ApolloError } from "apollo-server-express";
+import { PubSub } from "apollo-server-express";
+
+const pubsub = new PubSub();
 
 const messageRoomResolver: IResolvers = {
   Query: {
@@ -25,29 +28,29 @@ const messageRoomResolver: IResolvers = {
         const { messageRoomId, message } = args;
         const messageRoom = await MessageRoom.findById(messageRoomId);
         if (!messageRoom) throw new ApolloError("No such room");
-        const newMessage = {
-          user: context.currentUser.id,
-          createdAt: new Date(),
-          text: message,
-        };
-        messageRoom.messages.push(newMessage);
-        messageRoom.markModified("messages");
 
+        messageRoom.messages.push(message);
+        messageRoom.markModified("messages");
+        console.log("Publishing message");
+        pubsub.publish("MESSAGE_SENT", {
+          messageSent: {
+            message,
+            room: messageRoomId,
+          },
+        });
         await messageRoom.save();
         return true;
       }
     ),
   },
+  Subscription: {
+    messageSent: {
+      subscribe: () => pubsub.asyncIterator("MESSAGE_SENT"),
+    },
+  },
   MessageRoom: {
     group: async (root: MessageRoomType): Promise<GroupType> => {
       return (await root.populate("group").execPopulate()).group;
-    },
-    messages: async (root: MessageRoomType): Promise<MessageType[]> => {
-      console.log(root);
-      const newMessages = (await root.populate("messages.user").execPopulate())
-        .messages;
-      console.log(newMessages);
-      return newMessages;
     },
   },
 };

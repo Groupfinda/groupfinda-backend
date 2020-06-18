@@ -1,4 +1,4 @@
-import { UserType } from "../models";
+import { MessageType } from "../models";
 
 export type CreateUserType = {
   username: string;
@@ -104,11 +104,5 @@ export type GetMessageRoomType = {
 
 export type SendMessageType = {
   messageRoomId: string;
-  message: string;
-};
-
-export type MessageType = {
-  user: UserType;
-  createdAt: Date;
-  text: string;
+  message: MessageType;
 };

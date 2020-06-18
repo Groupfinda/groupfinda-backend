@@ -39,6 +39,13 @@ app.use("*", cors());
 app.use(compression());
 server.applyMiddleware({ app, path: "/graphql" });
 const httpServer = createServer(app);
-httpServer.listen({ port: PORT }, (): void =>
-  console.log(`GraphQL is now running on http://localhost:${PORT}/graphql`)
-);
+server.installSubscriptionHandlers(httpServer);
+
+httpServer.listen({ port: PORT }, (): void => {
+  console.log(
+    `GraphQL is now running on http://localhost:${PORT}${server.graphqlPath}`
+  );
+  console.log(
+    `Subscriptions ready at ws://localhost:${PORT}${server.subscriptionsPath}`
+  );
+});

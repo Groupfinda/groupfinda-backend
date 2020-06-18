@@ -3,7 +3,27 @@ extend type Query {
 }
 
 extend type Mutation {
-  sendMessage(messageRoomId: ID!, message: String!): Boolean!
+  sendMessage(messageRoomId: ID!, message: MessageInput!): Boolean!
+}
+
+extend type Subscription {
+  messageSent: MessageSubscription
+}
+
+type MessageSubscription {
+  message: Message!
+  room: ID!
+}
+input MessageUserInput {
+  _id: ID!
+  name: String!
+  avatar: String!
+}
+input MessageInput {
+  _id: ID!
+  createdAt: Date!
+  text: String!
+  user: MessageUserInput!
 }
 
 type MessageRoom {
@@ -15,7 +35,13 @@ type MessageRoom {
 
 type Message {
   _id: ID!
-  user: User!
+  user: MessageUser!
   createdAt: Date!
   text: String!
+}
+
+type MessageUser {
+  _id: ID!
+  name: String!
+  avatar: String!
 }
