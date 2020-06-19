@@ -90,6 +90,7 @@ export type UpdateUserType = {
   lowerAge?: number;
   upperAge?: number;
   maxDistance?: number;
+  newUser?: boolean;
 };
 
 export type GetGroupType = {
