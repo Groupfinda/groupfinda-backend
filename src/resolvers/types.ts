@@ -106,3 +106,14 @@ export type SendMessageType = {
   messageRoomId: string;
   message: MessageType;
 };
+
+export type MessageSubscriptionPayload = {
+  messageSent: {
+    message: MessageType;
+    room: string;
+  };
+};
+
+export type MessageSubscriptionVariables = {
+  messageRoomId: string;
+};

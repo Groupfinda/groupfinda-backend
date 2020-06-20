@@ -7,7 +7,7 @@ extend type Mutation {
 }
 
 extend type Subscription {
-  messageSent: MessageSubscription
+  messageSent(messageRoomId: String!): MessageSubscription
 }
 
 type MessageSubscription {

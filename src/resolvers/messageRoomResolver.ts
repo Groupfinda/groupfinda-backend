@@ -1,11 +1,15 @@
 // resolverMap.ts
 import { IResolvers } from "graphql-tools";
 import { GroupType, MessageRoom, MessageRoomType } from "../models";
-import { GetMessageRoomType, SendMessageType } from "./types";
+import {
+  GetMessageRoomType,
+  SendMessageType,
+  MessageSubscriptionPayload,
+  MessageSubscriptionVariables,
+} from "./types";
 import { combineResolvers } from "graphql-resolvers";
 import { isAuthenticated } from "./helpers/authorization";
-import { ApolloError } from "apollo-server-express";
-import { PubSub } from "apollo-server-express";
+import { ApolloError, PubSub, withFilter } from "apollo-server-express";
 
 const pubsub = new PubSub();
 
@@ -45,7 +49,15 @@ const messageRoomResolver: IResolvers = {
   },
   Subscription: {
     messageSent: {
-      subscribe: () => pubsub.asyncIterator("MESSAGE_SENT"),
+      subscribe: withFilter(
+        () => pubsub.asyncIterator("MESSAGE_SENT"),
+        (
+          payload: MessageSubscriptionPayload,
+          variables: MessageSubscriptionVariables
+        ) => {
+          return payload.messageSent.room === variables.messageRoomId;
+        }
+      ),
     },
   },
   MessageRoom: {
