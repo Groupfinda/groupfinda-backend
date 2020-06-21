@@ -75,6 +75,7 @@ extend type Mutation {
     lowerAge: Int
     upperAge: Int
     maxDistance: Int
+    newUser: Boolean
   ): Boolean!
 }
 

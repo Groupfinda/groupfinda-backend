@@ -108,10 +108,16 @@ const userResolver: IResolvers = {
       const profile = new Profile({
         user: user.id,
         userHobbies: [],
-        userFaculty: null,
-        userYearOfStudy: null,
+        userFaculty: "None",
+        userYearOfStudy: 0,
       });
       user.profile = profile.id;
+      user.location = "Singapore";
+      user.preferences = {
+        lowerAge: 1,
+        upperAge: 100,
+        maxDistance: 100
+      }
       try {
         await profile.save();
         const savedUser = await user.save();
@@ -246,6 +252,9 @@ const userResolver: IResolvers = {
 
           (Object.keys(args) as Array<keyof typeof args>).forEach((key) => {
             if (args[key]) {
+              user.set(key, args[key]);
+              user.markModified(key);
+            } else if (key==="newUser") {
               user.set(key, args[key]);
               user.markModified(key);
             }
