@@ -7,7 +7,7 @@ extend type Query {
 
 type Group {
   id: ID!
-  event: ID!
+  event: Event!
   members: [String]
   dateCreated: Date
   preferences: Preferences

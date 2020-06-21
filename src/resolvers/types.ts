@@ -1,3 +1,5 @@
+import { MessageType } from "../models";
+
 export type CreateUserType = {
   username: string;
   password: string;
@@ -95,4 +97,24 @@ export type UpdateUserType = {
 
 export type GetGroupType = {
   eventId?: string;
+};
+
+export type GetMessageRoomType = {
+  id: string;
+};
+
+export type SendMessageType = {
+  messageRoomId: string;
+  message: MessageType;
+};
+
+export type MessageSubscriptionPayload = {
+  messageSent: {
+    message: MessageType;
+    room: string;
+  };
+};
+
+export type MessageSubscriptionVariables = {
+  messageRoomId: string;
 };

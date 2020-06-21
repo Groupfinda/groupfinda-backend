@@ -1,0 +1,47 @@
+extend type Query {
+  getMessageRoom(id: ID!): MessageRoom
+}
+
+extend type Mutation {
+  sendMessage(messageRoomId: ID!, message: MessageInput!): Boolean!
+}
+
+extend type Subscription {
+  messageSent(messageRoomId: String!): MessageSubscription
+}
+
+type MessageSubscription {
+  message: Message!
+  room: ID!
+}
+input MessageUserInput {
+  _id: ID!
+  name: String!
+  avatar: String!
+}
+input MessageInput {
+  _id: ID!
+  createdAt: Date!
+  text: String!
+  user: MessageUserInput!
+}
+
+type MessageRoom {
+  id: ID!
+  messages: [Message]!
+  group: Group!
+  dateCreated: Date!
+}
+
+type Message {
+  _id: ID!
+  user: MessageUser!
+  createdAt: Date!
+  text: String!
+}
+
+type MessageUser {
+  _id: ID!
+  name: String!
+  avatar: String!
+}

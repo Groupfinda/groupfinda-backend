@@ -9,4 +9,8 @@ type Mutation {
   getPresignedURL(key: String!): JSON!
 }
 
+type Subscription {
+  _: Boolean
+}
+
 scalar Date

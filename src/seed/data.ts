@@ -1,4 +1,12 @@
-import { RawUserType, User, Profile, RangeQuestion, Event } from "../models";
+import {
+  RawUserType,
+  User,
+  Profile,
+  RangeQuestion,
+  Event,
+  Group,
+  MessageRoom,
+} from "../models";
 import questions from "./questions";
 import events from "./events";
 
@@ -73,13 +81,34 @@ const rawProfile2 = {
 const profile = new Profile(rawProfile);
 const profile2 = new Profile(rawProfile2);
 user.profile = profile["_id"];
-user2.profile = profile2['_id'];
+user2.profile = profile2["_id"];
 
 export default async () => {
+  await Event.insertMany(eventData);
+  const event = await Event.findOne({});
+  const group = new Group({
+    event: event?.id,
+    dateCreated: new Date(),
+    members: [user.id, user2.id],
+    preferences: {
+      lowerAge: 0,
+      upperAge: 100,
+    },
+  });
+  const message = new MessageRoom({
+    messages: [],
+    dateCreated: new Date(),
+    group: group.id,
+  });
+  group.messageRoom = message.id;
   await RangeQuestion.insertMany(questions);
+  user.groups.push(group.id);
+  user2.groups.push(group.id);
   await user.save();
   await user2.save();
   await profile.save();
   await profile2.save();
-  await Event.insertMany(eventData);
+
+  await message.save();
+  await group.save();
 };
