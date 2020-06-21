@@ -24,7 +24,7 @@ if (NODE_ENV === "development") {
   MONGO_PORT = "27017";
   MONGO_DATABASE = "test";
   TOKEN_SECRET = "secret";
-} else if (NODE_ENV === "production") {
+} else {
   MONGO_HOST = process.env.MONGO_HOST;
   MONGO_PORT = process.env.MONGO_PORT;
   MONGO_DATABASE = process.env.MONGO_DATABASE;
