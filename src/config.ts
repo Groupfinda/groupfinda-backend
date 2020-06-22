@@ -14,6 +14,10 @@ let MONGO_PORT: string | undefined;
 let MONGO_DATABASE: string | undefined;
 let TOKEN_SECRET: string | undefined;
 
+//Production
+let MONGO_USERNAME: string | undefined;
+let MONGO_PASSWORD: string | undefined; 
+
 if (NODE_ENV === "development") {
   MONGO_HOST = "mongodb";
   MONGO_PORT = "27017";
@@ -25,8 +29,9 @@ if (NODE_ENV === "development") {
   MONGO_DATABASE = "test";
   TOKEN_SECRET = "secret";
 } else {
+  MONGO_USERNAME = process.env.MONGO_USERNAME;
+  MONGO_PASSWORD = process.env.MONGO_PASSWORD;
   MONGO_HOST = process.env.MONGO_HOST;
-  MONGO_PORT = process.env.MONGO_PORT;
   MONGO_DATABASE = process.env.MONGO_DATABASE;
   TOKEN_SECRET = process.env.TOKEN_SECRET;
 }
@@ -34,6 +39,8 @@ if (NODE_ENV === "development") {
 export default {
   NODE_ENV,
   PORT,
+  MONGO_USERNAME,
+  MONGO_PASSWORD,
   MONGO_HOST,
   MONGO_PORT,
   MONGO_DATABASE,

@@ -30,6 +30,8 @@ const validateToken = (token: string) => {
 const app = express();
 const server = new ApolloServer({
   schema,
+  introspection: true,
+  playground: true,
   subscriptions: {
     onConnect: (connectionParams) => {
       let params = <ConnectionParams>connectionParams;

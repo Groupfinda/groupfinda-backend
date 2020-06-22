@@ -2,8 +2,14 @@ import mongoose from "mongoose";
 import runScript from "./seed/data";
 import config from "./config";
 
-const { MONGO_HOST, MONGO_PORT, MONGO_DATABASE, NODE_ENV } = config;
-const mongoURI = `mongodb://${MONGO_HOST}:${MONGO_PORT}/${MONGO_DATABASE}`;
+const { MONGO_HOST, MONGO_PORT, MONGO_DATABASE, NODE_ENV, MONGO_USERNAME, MONGO_PASSWORD } = config;
+let mongoURI: string
+if (NODE_ENV === "production") {
+  mongoURI = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}/${MONGO_DATABASE}?retryWrites=true&w=majority`
+}
+else {
+  mongoURI = `mongodb://${MONGO_HOST}:${MONGO_PORT}/${MONGO_DATABASE}`;
+}
 const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
