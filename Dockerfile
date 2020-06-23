@@ -6,7 +6,7 @@ COPY ./package*.json ./
 RUN npm install
 
 COPY ./ ./
-RUN tsc -p . && ncp src/schema dist/schema
+RUN npm run build
 
 FROM node:alpine
 WORKDIR /usr/app/backend
