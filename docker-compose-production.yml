@@ -4,15 +4,13 @@ services:
   backend:
     build:
       context: ./
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     environment:
       - PORT=3002
       - NODE_ENV=production
     ports:
       - 3002:3002
-    volumes:
-      - /usr/app/backend/node_modules
-      - ./:/usr/app/backend
+    env_file: .env
   python-backend:
     build:
       context: ../groupfinda-ai
