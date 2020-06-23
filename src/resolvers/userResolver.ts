@@ -23,6 +23,7 @@ import {
   ResetPasswordType,
   DeleteUserType,
   UpdateUserType,
+  ObjIterator,
 } from "./types";
 
 const userResolver: IResolvers = {
@@ -123,8 +124,8 @@ const userResolver: IResolvers = {
       user.preferences = {
         lowerAge: 1,
         upperAge: 100,
-        maxDistance: 100
-      }
+        maxDistance: 100,
+      };
       try {
         await profile.save();
         const savedUser = await user.save();
@@ -257,12 +258,13 @@ const userResolver: IResolvers = {
           const user = await User.findById(context.currentUser.id).exec();
           if (!user) throw new AuthenticationError("User not found");
 
-          (Object.keys(args) as Array<keyof typeof args>).forEach((key) => {
-            if (args[key]) {
-              user.set(key, args[key]);
+          const iterator: ObjIterator = args;
+          Object.keys(iterator).forEach((key) => {
+            if (iterator[key]) {
+              user.set(key, iterator[key]);
               user.markModified(key);
-            } else if (key==="newUser") {
-              user.set(key, args[key]);
+            } else if (key === "newUser") {
+              user.set(key, iterator[key]);
               user.markModified(key);
             }
           });

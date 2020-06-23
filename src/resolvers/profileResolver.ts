@@ -10,7 +10,11 @@ import {
 } from "../models";
 import { combineResolvers } from "graphql-resolvers";
 import { isAuthenticated } from "./helpers/authorization";
-import { SubmitRangeQuestionType, UpdateProfileType } from "./types";
+import {
+  SubmitRangeQuestionType,
+  UpdateProfileType,
+  ObjIterator,
+} from "./types";
 import {
   AuthenticationError,
   ApolloError,
@@ -99,9 +103,10 @@ const defaultResolver: IResolvers = {
         }).exec();
         if (!profile) throw new AuthenticationError("User is not valid");
 
-        (Object.keys(args) as Array<keyof typeof args>).forEach((key) => {
-          if (args[key]) {
-            profile.set(key, args[key]);
+        const iterator: ObjIterator = args;
+        Object.keys(iterator).forEach((key) => {
+          if (iterator[key]) {
+            profile.set(key, iterator[key]);
             profile.markModified(key);
           }
         });

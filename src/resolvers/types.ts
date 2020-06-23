@@ -1,5 +1,8 @@
 import { MessageType } from "../models";
 
+export type ObjIterator = {
+  [key: string]: any;
+};
 export type CreateUserType = {
   username: string;
   password: string;
