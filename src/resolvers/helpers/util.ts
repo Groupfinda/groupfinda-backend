@@ -1,6 +1,9 @@
+import { ObjIterator } from "../types";
+
 export const extractEmptyFields = (args: Object): string[] => {
-  const emptyFields = (Object.keys(args) as Array<keyof typeof args>).filter(
-    (key) => !args[key] || args[key].length === 0
+  const iterator: ObjIterator = args;
+  const emptyFields = Object.keys(iterator).filter(
+    (key) => !iterator[key] || iterator[key].length === 0
   );
   return emptyFields as string[];
 };

@@ -19,7 +19,7 @@ services:
   python-backend:
     build:
       context: ../groupfinda-ai
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
       - 5000:5000
   mongodb:
