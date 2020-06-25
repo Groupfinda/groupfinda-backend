@@ -9,7 +9,7 @@ import { mongoConnectWithRetry } from "./mongoose";
 import jwt from "jsonwebtoken";
 import config from "./config";
 import bodyParser from "body-parser";
-import { Group, MessageRoom } from "./models";
+import { Group, MessageRoom, User } from "./models";
 
 type ConnectionParams = {
   token: string;
@@ -68,6 +68,14 @@ app.post("/newgroup", jsonParser, async (req, res) => {
     });
     group.messageRoom = messageRoom.id;
     group.markModified("messageRoom");
+
+    for (let userId of group.members) {
+      const user = await User.findById(userId);
+      if (user) {
+        user.groups.push(group.id);
+        await user.save();
+      }
+    }
 
     await group.save();
     await messageRoom.save();
