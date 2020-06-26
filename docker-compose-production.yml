@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    environment:
+      - PORT=3002
+      - NODE_ENV=production
+    ports:
+      - 3002:3002
+    env_file: .env
+  python-backend:
+    build:
+      context: ../groupfinda-ai
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000

@@ -1,13 +1,31 @@
 // resolverMap.ts
 import { IResolvers } from "graphql-tools";
-import { User, UserType, TokenType, Profile, RangeQuestion } from "../models";
+import {
+  User,
+  UserType,
+  TokenType,
+  Profile,
+  ProfileType,
+  GroupType,
+} from "../models";
 import {
   UserInputError,
   ApolloError,
-  ForbiddenError,
+  AuthenticationError,
 } from "apollo-server-express";
 import { combineResolvers } from "graphql-resolvers";
 import { isAuthenticated } from "./helpers/authorization";
+import { extractEmptyFields } from "./helpers/util";
+import {
+  CreateUserType,
+  LoginUserType,
+  ForgetPasswordType,
+  ResetPasswordType,
+  DeleteUserType,
+  UpdateUserType,
+  ObjIterator,
+} from "./types";
+import config from "../config";
 
 const userResolver: IResolvers = {
   Query: {
@@ -31,16 +49,7 @@ const userResolver: IResolvers = {
      */
     createUser: async (
       root: void,
-      args: {
-        username: string;
-        password: string;
-        confirmPassword: string;
-        firstName: string;
-        lastName: string;
-        email: string;
-        gender: string;
-        birthday: Date;
-      }
+      args: CreateUserType
     ): Promise<TokenType> => {
       // Ensures all input fields are given
       if (
@@ -53,15 +62,36 @@ const userResolver: IResolvers = {
         !args.gender ||
         !args.birthday
       ) {
-        throw new UserInputError("Missing required fields", {
-          invalidArgs: Object.keys(args),
+        throw new UserInputError("Input fields must not be empty", {
+          invalidArgs: extractEmptyFields(args),
+        });
+      }
+
+      // Make sure username is at least length 6
+      if (args.username.length < 6) {
+        throw new UserInputError("Username must be at least 6 characters", {
+          invalidArgs: ["username"],
+        });
+      }
+
+      // Make sure password is at least length 6
+      if (args.password.length < 6) {
+        throw new UserInputError("Password must be at least 6 characters", {
+          invalidArgs: ["password"],
         });
       }
 
       // Check if passwords match
       if (args.password !== args.confirmPassword) {
         throw new UserInputError("Passwords do not match", {
-          invalidArgs: [args.password, args.confirmPassword],
+          invalidArgs: ["password", "confirmPassword"],
+        });
+      }
+
+      // Check if email is of valid format
+      if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(args.email)) {
+        throw new UserInputError("Email is not of valid format", {
+          invalidArgs: ["email"],
         });
       }
 
@@ -69,7 +99,7 @@ const userResolver: IResolvers = {
       const emailExists = await User.findOne({ email: args.email }).exec();
       if (emailExists) {
         throw new UserInputError("Email has already been registered", {
-          invalidArgs: args.email,
+          invalidArgs: ["email"],
         });
       }
 
@@ -79,21 +109,24 @@ const userResolver: IResolvers = {
       }).exec();
       if (usernameExists) {
         throw new UserInputError("Username is taken", {
-          invalidArgs: args.username,
+          invalidArgs: ["username"],
         });
       }
 
       const user = new User(args);
       const profile = new Profile({
         user: user.id,
-        rangeQuestions: new Array(
-          await RangeQuestion.countDocuments({}).exec()
-        ).fill(0),
         userHobbies: [],
-        userFaculty: null,
-        userYearOfStudy: null,
+        userFaculty: "None",
+        userYearOfStudy: 0,
       });
       user.profile = profile.id;
+      user.location = "Singapore";
+      user.preferences = {
+        lowerAge: 1,
+        upperAge: 100,
+        maxDistance: 100,
+      };
       try {
         await profile.save();
         const savedUser = await user.save();
@@ -107,13 +140,7 @@ const userResolver: IResolvers = {
      *
      * Generates token to be returned to user for authentication
      */
-    loginUser: async (
-      root: void,
-      args: {
-        username: string;
-        password: string;
-      }
-    ): Promise<TokenType> => {
+    loginUser: async (root: void, args: LoginUserType): Promise<TokenType> => {
       try {
         const user = await User.findOne({ username: args.username }).exec();
         if (!user) throw new Error();
@@ -133,12 +160,30 @@ const userResolver: IResolvers = {
      */
     forgetPassword: async (
       root: void,
-      args: {
-        username: string;
-        email: string;
-      }
+      args: ForgetPasswordType
     ): Promise<boolean> => {
-      //TODO
+      if (!args.username || !args.email) {
+        throw new UserInputError("Input fields must not be empty", {
+          invalidArgs: extractEmptyFields(args),
+        });
+      }
+
+      let user: UserType | null = null;
+      try {
+        user = await User.findOne({ username: args.username }).exec();
+      } catch (err) {
+        throw new ApolloError(err.message);
+      }
+      if (!user) {
+        throw new UserInputError("No such user", {
+          invalidArgs: ["username"],
+        });
+      }
+      if (user.username !== args.username || user.email !== args.email) {
+        throw new UserInputError("No such combination of username and email", {
+          invalidArgs: ["username", "email"],
+        });
+      }
       return true;
     },
     /**
@@ -151,31 +196,37 @@ const userResolver: IResolvers = {
       isAuthenticated,
       async (
         root: void,
-        args: {
-          originalPassword: string;
-          newPassword: string;
-          confirmNewPassword: string;
-        },
+        args: ResetPasswordType,
         context
       ): Promise<boolean> => {
         if (args.newPassword !== args.confirmNewPassword) {
           throw new UserInputError("Passwords do not match", {
-            invalidArgs: [args.newPassword, args.confirmNewPassword],
+            invalidArgs: ["newPassword", "confirmNewPassword"],
           });
         }
+
+        let user: UserType | null;
         try {
-          const user = await User.findById(context.currentUser.id).exec();
-          if (!user) throw new Error("User not found");
-          const correctPassword = await user.comparePassword(
-            args.originalPassword
-          );
-          if (!correctPassword) throw new Error("Password is incorrect");
-          user.password = args.newPassword;
-          await user.save();
-          return true;
+          user = await User.findById(context.currentUser.id).exec();
         } catch (err) {
-          throw new ForbiddenError(err.message);
+          throw new AuthenticationError(err.message);
         }
+        if (!user) throw new AuthenticationError("User not found");
+        const correctPassword = await user.comparePassword(
+          args.originalPassword
+        );
+        if (!correctPassword)
+          throw new UserInputError("Password is incorrect", {
+            invalidArgs: ["originalPassword"],
+          });
+        user.password = args.newPassword;
+        try {
+          await user.save();
+        } catch (err) {
+          throw new ApolloError(err.message);
+        }
+
+        return true;
       }
     ),
     /**
@@ -183,12 +234,7 @@ const userResolver: IResolvers = {
      * Deletes associated user profile as well.
      * Mostly for testing.
      */
-    deleteUser: async (
-      root: void,
-      args: {
-        username: string;
-      }
-    ): Promise<boolean> => {
+    deleteUser: async (root: void, args: DeleteUserType): Promise<boolean> => {
       try {
         const user = await User.findOne({ username: args.username }).exec();
         if (!user) throw new Error();
@@ -202,6 +248,45 @@ const userResolver: IResolvers = {
         });
       }
       return true;
+    },
+    /**
+     * Updates the user information based on optional user fields
+     */
+    updateUserField: combineResolvers(
+      isAuthenticated,
+      async (root: void, args: UpdateUserType, context): Promise<boolean> => {
+        try {
+          const user = await User.findById(context.currentUser.id).exec();
+          if (!user) throw new AuthenticationError("User not found");
+
+          const iterator: ObjIterator = args;
+          Object.keys(iterator).forEach((key) => {
+            if (key === "avatar") {
+              user.set(key, config.ImageURLCreator(context.currentUser.id, iterator[key]))
+              user.markModified(key);
+            } else if (iterator[key]) {
+              user.set(key, iterator[key]);
+              user.markModified(key);
+            } else if (key === "newUser") {
+              user.set(key, iterator[key]);
+              user.markModified(key);
+            }
+          });
+
+          await user.save();
+          return true;
+        } catch (err) {
+          throw new ApolloError(err.message);
+        }
+      }
+    ),
+  },
+  User: {
+    profile: async (root: UserType): Promise<ProfileType> => {
+      return (await root.populate("profile").execPopulate()).profile;
+    },
+    groups: async (root: UserType): Promise<GroupType[]> => {
+      return (await root.populate("groups").execPopulate()).groups;
     },
   },
 };

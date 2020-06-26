@@ -9,9 +9,8 @@ extend type Query {
   me: User
 }
 
-type Mutation {
+extend type Mutation {
   """
-  "
   Mutation to handle creating of a user with the specified arguments.
 
   Profile should be generated at this point as well
@@ -61,6 +60,23 @@ type Mutation {
   Search for a user by the username and deletes him and his profile
   """
   deleteUser(username: String!): Boolean!
+
+  """
+  Mutation to update a user's basic information based on optional fields
+
+  Searches for a user and updates the relevant fields specified in argument
+  """
+  updateUserField(
+    firstName: String
+    lastName: String
+    birthday: Date
+    gender: String
+    avatar: String
+    lowerAge: Int
+    upperAge: Int
+    maxDistance: Int
+    newUser: Boolean
+  ): Boolean!
 }
 
 """
@@ -90,15 +106,16 @@ type User {
   username: String!
   firstName: String!
   lastName: String!
-  password: String! #Remove this after testing
   email: String!
   gender: String!
   avatar: String!
   isVerified: Boolean!
   dateJoined: Date!
   birthday: Date!
-  location: String!
-  profile: ID!
-  group: [ID]!
+  location: String
+  profile: Profile!
+  groups: [Group]!
   preferences: Preferences
+  newUser: Boolean!
+  role: String!
 }

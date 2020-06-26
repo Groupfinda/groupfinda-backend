@@ -1,16 +1,23 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { UserType, GroupType } from "./";
+import { GroupType } from "./";
 
 //Type for Message
-type Message = {
-  userId: UserType["_id"];
-  timestamp: Date;
-  message: string;
+export type MessageType = {
+  _id: string;
+  user: MessageUserType;
+  createdAt: Date;
+  text: string;
+};
+
+export type MessageUserType = {
+  _id: string;
+  name: string;
+  avatar: string;
 };
 
 //Interface for MessageRoom type without mongoDB
 export interface RawMessageRoomType {
-  messages: Array<Message>;
+  messages: Array<MessageType>;
   group: GroupType["_id"];
   dateCreated: Date;
 }
@@ -19,16 +26,24 @@ export interface RawMessageRoomType {
 export interface MessageRoomType extends Document, RawMessageRoomType {}
 
 const MessageRoomSchema: Schema = new mongoose.Schema({
-  messages: [
-    {
-      userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+  messages: {
+    type: [
+      {
+        user: {
+          _id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+          },
+          name: String,
+          avatar: String,
+        },
+        createdAt: Date,
+        text: String,
+        _id: String,
       },
-      timestamp: Date,
-      message: String,
-    },
-  ],
+    ],
+    default: [],
+  },
   group: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Group",

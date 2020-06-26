@@ -1,0 +1,15 @@
+extend type Query {
+  """
+  Finds groups with relevant event ID, used for backend checking
+  """
+  getGroups(eventId: String): [Group]
+}
+
+type Group {
+  id: ID!
+  event: Event!
+  members: [String]
+  dateCreated: Date
+  preferences: Preferences
+  messageRoom: String
+}

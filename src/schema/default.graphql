@@ -1,5 +1,16 @@
 type Query {
   helloWorld: String!
+  pythonTest: String
+  postTest: Boolean
+}
+
+type Mutation {
+  refetchQuery: String!
+  getPresignedURL(key: String!): JSON!
+}
+
+type Subscription {
+  _: Boolean
 }
 
 scalar Date

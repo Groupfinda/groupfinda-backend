@@ -1,15 +1,17 @@
 // schema.ts
-import "graphql-import-node";
 import path from "path";
-import { fileLoader, mergeTypes, mergeResolvers } from "merge-graphql-schemas";
+import { loadFilesSync } from "@graphql-tools/load-files";
+import { mergeTypeDefs, mergeResolvers } from "@graphql-tools/merge";
 
 import { makeExecutableSchema } from "graphql-tools";
 import { GraphQLSchema } from "graphql";
 
-const typesArray = fileLoader(path.join(__dirname, "./schema"));
-const resolverArray = fileLoader(path.join(__dirname, "./resolvers"));
+const typesArray = loadFilesSync(path.join(__dirname, "./schema"));
+const resolverArray = loadFilesSync(
+  path.join(__dirname, "./resolvers/*.(ts|js)")
+);
 
-const typeDefs = mergeTypes(typesArray, { all: true });
+const typeDefs = mergeTypeDefs(typesArray);
 const resolvers = mergeResolvers(resolverArray);
 
 const schema: GraphQLSchema = makeExecutableSchema({
