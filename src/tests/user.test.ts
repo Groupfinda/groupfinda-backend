@@ -17,7 +17,7 @@ beforeAll(async () => {
 
 test("Sanity check", async () => {
   const response = await userApi.helloWorld();
-  expect(response.data.data.helloWorld).toBe("👋 Hello world! 👋");
+  expect(response.data.data.helloWorld).toBe("👋 Hello world! v2 👋");
 });
 describe("Users", () => {
   describe(`createUser(
@@ -523,8 +523,8 @@ describe("Users", () => {
 
       expect(user.profile.rangeQuestions.length).toBe(300);
       expect(user.profile.userHobbies).toStrictEqual([]);
-      expect(user.profile.userFaculty).not.toBeTruthy();
-      expect(user.profile.userYearOfStudy).not.toBeTruthy();
+      expect(user.profile.userFaculty).toBe("None");
+      expect(user.profile.userYearOfStudy).toBe(0);
       expect(user.profile.eventPreferences).toStrictEqual({});
     });
 
@@ -547,8 +547,8 @@ describe("Users", () => {
 
       expect(user.profile.rangeQuestions.length).toBe(300);
       expect(user.profile.userHobbies).toStrictEqual([]);
-      expect(user.profile.userFaculty).not.toBeTruthy();
-      expect(user.profile.userYearOfStudy).not.toBeTruthy();
+      expect(user.profile.userFaculty).toBe("None");
+      expect(user.profile.userYearOfStudy).toBe(0);
       expect(user.profile.eventPreferences).toStrictEqual({});
     });
 

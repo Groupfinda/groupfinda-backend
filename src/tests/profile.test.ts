@@ -45,8 +45,8 @@ describe("Profile", () => {
         {}
       );
       expect(result.data.data.getUserProfile.userHobbies).toStrictEqual([]);
-      expect(result.data.data.getUserProfile.userFaculty).not.toBeTruthy();
-      expect(result.data.data.getUserProfile.userYearOfStudy).not.toBeTruthy();
+      expect(result.data.data.getUserProfile.userFaculty).toBe("None");
+      expect(result.data.data.getUserProfile.userYearOfStudy).toBe(0);
     });
 
     test("returns error if not authenticated", async () => {
