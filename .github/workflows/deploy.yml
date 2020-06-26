@@ -34,7 +34,7 @@ jobs:
           git checkout -f master
           git pull origin master
           echo ${{ secrets.EC2_PASSWORD }} | sudo -S docker-compose -f docker-compose-production.yml down
-          echo ${{ secrets.EC2_PASSWORD }} | sudo -S docker-compose -f docker-compose-production.yml up --build
+          echo ${{ secrets.EC2_PASSWORD }} | sudo -S docker-compose -f docker-compose-production.yml up --build -d
           
 
        
