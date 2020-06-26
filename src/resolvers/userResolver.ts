@@ -25,6 +25,7 @@ import {
   UpdateUserType,
   ObjIterator,
 } from "./types";
+import config from "../config";
 
 const userResolver: IResolvers = {
   Query: {
@@ -260,7 +261,10 @@ const userResolver: IResolvers = {
 
           const iterator: ObjIterator = args;
           Object.keys(iterator).forEach((key) => {
-            if (iterator[key]) {
+            if (key === "avatar") {
+              user.set(key, config.ImageURLCreator(context.currentUser.id, iterator[key]))
+              user.markModified(key);
+            } else if (iterator[key]) {
               user.set(key, iterator[key]);
               user.markModified(key);
             } else if (key === "newUser") {

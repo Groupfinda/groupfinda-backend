@@ -36,6 +36,9 @@ const eventResolver: IResolvers = {
       //Regex case insensitive search on title and description
       if (args.searchTerm) {
         const query = Event.find({
+          dateLastRegister: {
+            $gt: new Date()
+          },
           $or: [
             { title: { $regex: args.searchTerm, $options: "i" } },
             { description: { $regex: args.searchTerm, $options: "i" } },
@@ -51,7 +54,11 @@ const eventResolver: IResolvers = {
         return await query.exec();
       }
       //Returns all events
-      return Event.find({});
+      return Event.find({
+        dateLastRegister: {
+          $gt: new Date()
+        }
+      });
     },
     /**
      * Gets an event by the ID
@@ -84,7 +91,12 @@ const eventResolver: IResolvers = {
         const allEvents = profile?.eventsLiked
           .concat(profile.eventsDisliked)
           .concat(profile.eventsRegistered);
-        const events = await Event.find({ _id: { $nin: allEvents } });
+        const events = await Event.find({
+          _id: { $nin: allEvents },
+          dateLastRegister: {
+            $gt: new Date()
+          }
+        });
         return events;
       }
     ),

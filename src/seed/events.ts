@@ -126,7 +126,7 @@ export default [
       "https://postmediatorontosun.files.wordpress.com/2019/12/cat-e1575303121192.jpg",
     ],
     private: false,
-    groupSize: 4,
+    groupSize: 2,
     category: ["fun", "yay", "woohoo"],
     locationOn: false,
     eventCode: "123456",
