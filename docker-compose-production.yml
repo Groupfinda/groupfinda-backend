@@ -15,5 +15,7 @@ services:
     build:
       context: ../groupfinda-ai
       dockerfile: Dockerfile
+    environment:
+      - PYTHON_ENV=production
     ports:
       - 5000:5000
