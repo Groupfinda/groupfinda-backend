@@ -258,7 +258,6 @@ const userResolver: IResolvers = {
         try {
           const user = await User.findById(context.currentUser.id).exec();
           if (!user) throw new AuthenticationError("User not found");
-
           const iterator: ObjIterator = args;
           Object.keys(iterator).forEach((key) => {
             if (key === "avatar") {
