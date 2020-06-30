@@ -16,6 +16,10 @@ extend type Query {
   Get a list of events for swiping
   """
   getSwipeEvents: [Event]!
+  """
+  Get a list of events owned by user
+  """
+  getUserEvents: [Event]!
 }
 
 extend type Mutation {

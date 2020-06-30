@@ -39,6 +39,7 @@ const eventResolver: IResolvers = {
           dateLastRegister: {
             $gt: new Date()
           },
+          private: false,
           $or: [
             { title: { $regex: args.searchTerm, $options: "i" } },
             { description: { $regex: args.searchTerm, $options: "i" } },
@@ -57,7 +58,8 @@ const eventResolver: IResolvers = {
       return Event.find({
         dateLastRegister: {
           $gt: new Date()
-        }
+        },
+        private: false,
       });
     },
     /**
@@ -100,6 +102,18 @@ const eventResolver: IResolvers = {
         return events;
       }
     ),
+    /**
+     * Gets a list of events owned by the user
+     */
+    getUserEvents: combineResolvers(
+      isAuthenticated,
+      async (_: void, __: void, context): Promise<EventType[]> => {
+        const events = await Event.find({
+          owner: context.currentUser.id,
+        })
+        return events
+      }
+    )
   },
   Mutation: {
     /**
