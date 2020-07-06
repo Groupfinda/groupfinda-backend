@@ -97,7 +97,8 @@ const eventResolver: IResolvers = {
           _id: { $nin: allEvents },
           dateLastRegister: {
             $gt: new Date()
-          }
+          },
+          private: false,
         });
         return events;
       }
