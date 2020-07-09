@@ -3,6 +3,10 @@ extend type Query {
   Finds groups with relevant event ID, used for backend checking
   """
   getGroups(eventId: String): [Group]
+  """
+  Checks if user is in a full group
+  """
+  getUserGroup(eventId: ID): String
 }
 
 type Group {
