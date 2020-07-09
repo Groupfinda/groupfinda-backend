@@ -286,7 +286,7 @@ const userResolver: IResolvers = {
 
         const { token } = args
         if (!token) throw new Error("No token supplied")
-
+        console.log(`Received request to save ${token} to ${context.currentUser.username}`)
         let user: UserType | null
         try {
           user = await User.findById(context.currentUser.id).exec()
@@ -301,6 +301,7 @@ const userResolver: IResolvers = {
 
         try {
           const savedUser = await user.save()
+          console.log(`Saved ${savedUser.username}'s token to be ${savedUser.expoToken}`)
           return savedUser.expoToken
         } catch (err) {
           throw new ApolloError(err)
