@@ -10,6 +10,7 @@ import jwt from "jsonwebtoken";
 import config from "./config";
 import bodyParser from "body-parser";
 import { Group, MessageRoom, User } from "./models";
+import { sendGroupNotification } from './notifications'
 
 type ConnectionParams = {
   token: string;
@@ -55,6 +56,7 @@ const server = new ApolloServer({
 });
 app.use("*", cors());
 app.use(compression());
+
 app.post("/newgroup", jsonParser, async (req, res) => {
   const { groupId } = req.body;
   try {
@@ -74,6 +76,9 @@ app.post("/newgroup", jsonParser, async (req, res) => {
       if (user) {
         user.groups.push(group.id);
         await user.save();
+        if (user.expoToken) {
+          await sendGroupNotification(user.expoToken)
+        }
       }
     }
 

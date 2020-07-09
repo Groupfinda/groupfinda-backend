@@ -24,6 +24,7 @@ import {
   DeleteUserType,
   UpdateUserType,
   ObjIterator,
+  AddExpoTokenType,
 } from "./types";
 import config from "../config";
 
@@ -279,6 +280,33 @@ const userResolver: IResolvers = {
         }
       }
     ),
+    addExpoToken: combineResolvers(
+      isAuthenticated,
+      async (root: void, args: AddExpoTokenType, context): Promise<string> => {
+
+        const { token } = args
+        if (!token) throw new Error("No token supplied")
+
+        let user: UserType | null
+        try {
+          user = await User.findById(context.currentUser.id).exec()
+        } catch (err) {
+          throw new ApolloError(err)
+        }
+
+        if (!user) throw new AuthenticationError("User not found")
+
+        user.expoToken = token;
+        user.markModified("expoToken")
+
+        try {
+          const savedUser = await user.save()
+          return savedUser.expoToken
+        } catch (err) {
+          throw new ApolloError(err)
+        }
+      }
+    )
   },
   User: {
     profile: async (root: UserType): Promise<ProfileType> => {

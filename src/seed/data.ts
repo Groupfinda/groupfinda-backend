@@ -32,6 +32,7 @@ const rawUser: RawUserType = {
   },
   newUser: true,
   role: "USER",
+  expoToken: ""
 };
 
 const rawUser2: RawUserType = {
@@ -56,6 +57,7 @@ const rawUser2: RawUserType = {
   },
   newUser: true,
   role: "USER",
+  expoToken: ""
 };
 
 const user = new User(rawUser);
@@ -84,6 +86,7 @@ user.profile = profile["_id"];
 user2.profile = profile2["_id"];
 
 export default async () => {
+  eventData.forEach(e => e.owner = user.id)
   await Event.insertMany(eventData);
   const event = await Event.findOne({});
   const group = new Group({
