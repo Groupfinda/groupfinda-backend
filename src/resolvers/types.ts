@@ -121,3 +121,7 @@ export type MessageSubscriptionPayload = {
 export type MessageSubscriptionVariables = {
   messageRoomId: string;
 };
+
+export type AddExpoTokenType = {
+  token: string
+}
