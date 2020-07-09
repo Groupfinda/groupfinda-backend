@@ -29,6 +29,7 @@ export interface RawUserType {
   };
   newUser: boolean;
   role: "USER" | "HOST" | "ADMIN";
+  expoToken: string;
 }
 
 //Interface for token return type
@@ -87,6 +88,10 @@ const userSchema: Schema = new mongoose.Schema({
     enum: ["USER", "HOST", "ADMIN"],
     default: "USER",
   },
+  expoToken: {
+    type: String,
+    default: ""
+  }
 });
 
 /**

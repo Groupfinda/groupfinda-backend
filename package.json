@@ -7,8 +7,8 @@
     "start": "node dist/server.js",
     "build": "tsc --skipLibCheck -p . && ncp src/schema dist/schema",
     "dev": "nodemon src/server.ts -L --ignore 'src/tests' --exec ts-node src/server.ts -e ts,graphql",
-    "test": "NODE_ENV=test jest",
-    "test:dev": "NODE_ENV=test jest --watchAll"
+    "test": "NODE_ENV=test jest --runInBand",
+    "test:dev": "NODE_ENV=test jest --watchAll --runInBand"
   },
   "jest": {
     "testEnvironment": "node"

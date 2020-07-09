@@ -77,6 +77,11 @@ extend type Mutation {
     maxDistance: Int
     newUser: Boolean
   ): Boolean!
+
+  """
+  Mutation to update the expo notification token of a user
+  """
+  addExpoToken(token: String!): String!
 }
 
 """
@@ -118,4 +123,5 @@ type User {
   preferences: Preferences
   newUser: Boolean!
   role: String!
+  expoToken: String!
 }
