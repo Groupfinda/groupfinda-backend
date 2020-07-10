@@ -1,6 +1,6 @@
 // resolverMap.ts
 import { IResolvers } from "graphql-tools";
-import { EventType, Event, UserType, Profile } from "../models";
+import { EventType, Event, UserType, Profile, Group } from "../models";
 
 import { combineResolvers } from "graphql-resolvers";
 import { isAuthenticated } from "./helpers/authorization";
@@ -224,6 +224,24 @@ const eventResolver: IResolvers = {
           );
         }
 
+        const group = await Group.findOne({
+          event: args.eventId,
+          members: context.currentUser.id
+        })
+        if (group?.messageRoom !== null && config.NODE_ENV !== "test") {
+          throw new ForbiddenError(
+            `User is already matched with a group for the event ${event.title}`
+          )
+        }
+
+        if (group) {
+          const newGroupMembers = group.members.filter(
+            (id) => id.toString() !== context.currentUser.id.toString()
+          );
+          group.members = newGroupMembers
+        }
+
+
         const newRegisteredUsers = event.registeredUsers.filter(
           (id) => id.toString() !== context.currentUser.id.toString()
         );
@@ -244,6 +262,7 @@ const eventResolver: IResolvers = {
 
         profile.eventPreferences = preferences;
         profile.markModified("eventPreferences");
+        await group?.save();
         await profile.save();
         const savedEvent = await event.save();
         return savedEvent;
