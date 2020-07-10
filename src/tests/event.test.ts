@@ -1,6 +1,6 @@
 import * as eventApi from "./eventApi";
 import * as userApi from "./userApi";
-import { Event, User } from "../models";
+import { Event, User, Group } from "../models";
 import {
   validEvent,
   validUser,
@@ -328,7 +328,7 @@ describe("Events", () => {
   });
 
   describe("unregisterEvent(eventId: String!): Event!", () => {
-    beforeAll(async () => {
+    beforeEach(async () => {
       await User.deleteMany({});
       await Event.deleteMany({});
       await userApi.createUser(validUser);
@@ -337,7 +337,7 @@ describe("Events", () => {
       await eventApi.createEvent(validEvent, token);
     });
 
-    afterAll(async () => {
+    afterEach(async () => {
       await User.deleteMany({});
       await Event.deleteMany({});
     });
