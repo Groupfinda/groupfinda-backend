@@ -1,6 +1,6 @@
 import * as eventApi from "./eventApi";
 import * as userApi from "./userApi";
-import { Event, User, Group } from "../models";
+import { Event, User } from "../models";
 import {
   validEvent,
   validUser,
