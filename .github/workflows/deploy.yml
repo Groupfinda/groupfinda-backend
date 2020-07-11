@@ -30,6 +30,7 @@ jobs:
         # ssh password
         password: ${{ secrets.EC2_PASSWORD }}
         script: |
+          set -e
           cd groupfinda-backend
           git checkout -f master
           git pull origin master
