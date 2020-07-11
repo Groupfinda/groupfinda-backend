@@ -12,7 +12,7 @@ extend type Query {
 type Group {
   id: ID!
   event: Event!
-  members: [String]
+  members: [User]
   dateCreated: Date
   preferences: Preferences
   messageRoom: String

@@ -1,6 +1,6 @@
 // resolverMap.ts
 import { IResolvers } from "graphql-tools";
-import { GroupType, Group, EventType } from "../models";
+import { GroupType, Group, EventType, UserType } from "../models";
 import { GetGroupType } from "./types";
 import { combineResolvers } from "graphql-resolvers";
 import { isAuthenticated } from "./helpers/authorization";
@@ -36,6 +36,10 @@ const groupResolver: IResolvers = {
     event: async (root: GroupType): Promise<EventType> => {
       return (await root.populate("event").execPopulate()).event;
     },
+    members: async (root: GroupType): Promise<UserType[]> => {
+      return (await root.populate("members").execPopulate()).members
+
+    }
   },
 };
 
