@@ -150,7 +150,9 @@ export const me = async (token: string = "") =>
           event {
             id
           }
-          members
+          members {
+            id
+          }
           dateCreated
           preferences {
             lowerAge
