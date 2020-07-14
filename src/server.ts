@@ -77,7 +77,7 @@ app.post("/newgroup", jsonParser, async (req, res) => {
         user.groups.push(group.id);
         await user.save();
         if (user.expoToken) {
-          await sendGroupNotification(user.expoToken)
+          await sendGroupNotification(user.expoToken, group.id.toString())
         }
       }
     }

@@ -1,6 +1,6 @@
 // resolverMap.ts
 import { IResolvers } from "graphql-tools";
-import { GroupType, MessageRoom, MessageRoomType } from "../models";
+import { GroupType, MessageRoom, MessageRoomType, Group, User } from "../models";
 import {
   GetMessageRoomType,
   SendMessageType,
@@ -10,6 +10,7 @@ import {
 import { combineResolvers } from "graphql-resolvers";
 import { isAuthenticated } from "./helpers/authorization";
 import { ApolloError, PubSub, withFilter } from "apollo-server-express";
+import { sendMessageNotification } from '../notifications'
 
 const pubsub = new PubSub();
 
@@ -43,6 +44,22 @@ const messageRoomResolver: IResolvers = {
           },
         });
         await messageRoom.save();
+
+        Group.findById(messageRoom.group).populate('event').exec().then(group => {
+          group?.members.forEach(member => {
+            User.findById(member).exec().then(user => {
+
+              if (user?.id.toString() !== context.currentUser.id.toString()) {
+                if (user?.expoToken) {
+                  sendMessageNotification(user?.expoToken, group.event.title, group.id.toString()).catch(err => console.log(err))
+                }
+              }
+
+
+
+            })
+          })
+        })
         return true;
       }
     ),
