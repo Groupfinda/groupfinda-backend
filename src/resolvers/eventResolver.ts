@@ -17,6 +17,7 @@ import {
   SearchEventType,
   GetEventType,
   ViewEventType,
+  ObjIterator,
 } from "./types";
 import {
   UserInputError,
@@ -37,7 +38,7 @@ const eventResolver: IResolvers = {
       if (args.searchTerm) {
         const query = Event.find({
           dateLastRegister: {
-            $gt: new Date()
+            $gt: new Date(),
           },
           private: false,
           $or: [
@@ -57,7 +58,7 @@ const eventResolver: IResolvers = {
       //Returns all events
       return Event.find({
         dateLastRegister: {
-          $gt: new Date()
+          $gt: new Date(),
         },
         private: false,
       });
@@ -70,12 +71,8 @@ const eventResolver: IResolvers = {
       root: void,
       args: GetEventType
     ): Promise<EventType | null> => {
-      if (!args.eventId) throw new UserInputError("ID must be supplied");
-      try {
-        return await Event.findById(args.eventId).exec();
-      } catch (err) {
-        throw new ForbiddenError(err.message);
-      }
+      if (!args.eventId) return null;
+      return await Event.findById(args.eventId).exec();
     },
     /**
      * Gets a list of swipable events which are filtered based on what
@@ -96,7 +93,7 @@ const eventResolver: IResolvers = {
         const events = await Event.find({
           _id: { $nin: allEvents },
           dateLastRegister: {
-            $gt: new Date()
+            $gt: new Date(),
           },
           private: false,
         });
@@ -111,10 +108,10 @@ const eventResolver: IResolvers = {
       async (_: void, __: void, context): Promise<EventType[]> => {
         const events = await Event.find({
           owner: context.currentUser.id,
-        })
-        return events
+        });
+        return events;
       }
-    )
+    ),
   },
   Mutation: {
     /**
@@ -134,18 +131,41 @@ const eventResolver: IResolvers = {
             invalidArgs: extractEmptyFields(args),
           });
         }
+        const id = args.id;
+        delete args.id;
+        if (id) {
+          const event = await Event.findById(id).exec();
+          if (!event) throw new ApolloError("Error finding event");
+          const iterator: ObjIterator = args;
+          Object.keys(iterator).forEach((key) => {
+            if (iterator[key]) {
+              event.set(key, iterator[key]);
+              event.markModified(key);
+            }
+          });
 
-        const eventCode = generateRandomCode(6);
-        const event = new Event({
-          ...args,
-          eventCode,
-          owner: context.currentUser.id,
-          images: args.images.map((image) =>
-            config.ImageURLCreator(context.currentUser.id, image)
-          ),
-        });
-        const savedEvent = await event.save();
-        return savedEvent;
+          event.images = args.images.map((image) => {
+            if (image.startsWith("http")) {
+              return image;
+            } else {
+              return config.ImageURLCreator(context.currentUser.id, image);
+            }
+          });
+          const savedEvent = await event.save();
+          return savedEvent;
+        } else {
+          const eventCode = generateRandomCode(6);
+          const event = new Event({
+            ...args,
+            eventCode,
+            owner: context.currentUser.id,
+            images: args.images.map((image) =>
+              config.ImageURLCreator(context.currentUser.id, image)
+            ),
+          });
+          const savedEvent = await event.save();
+          return savedEvent;
+        }
       }
     ),
     /**
@@ -226,21 +246,20 @@ const eventResolver: IResolvers = {
 
         const group = await Group.findOne({
           event: args.eventId,
-          members: context.currentUser.id
-        })
+          members: context.currentUser.id,
+        });
         if (group?.messageRoom !== null && config.NODE_ENV !== "test") {
           throw new ForbiddenError(
             `User is already matched with a group for the event ${event.title}`
-          )
+          );
         }
 
         if (group) {
           const newGroupMembers = group.members.filter(
             (id) => id.toString() !== context.currentUser.id.toString()
           );
-          group.members = newGroupMembers
+          group.members = newGroupMembers;
         }
-
 
         const newRegisteredUsers = event.registeredUsers.filter(
           (id) => id.toString() !== context.currentUser.id.toString()
