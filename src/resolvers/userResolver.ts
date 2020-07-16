@@ -264,6 +264,9 @@ const userResolver: IResolvers = {
             if (key === "avatar") {
               user.set(key, config.ImageURLCreator(context.currentUser.id, iterator[key]))
               user.markModified(key);
+            } else if (key === "lowerAge" || key === "upperAge" || key === "maxDistance"){
+              user.preferences[key] = iterator[key];
+              user.markModified("preferences")
             } else if (iterator[key]) {
               user.set(key, iterator[key]);
               user.markModified(key);
