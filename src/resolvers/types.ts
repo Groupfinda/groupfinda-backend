@@ -35,6 +35,7 @@ export type DeleteUserType = {
 };
 
 export type CreateEventType = {
+  id: string | undefined;
   title: string;
   description: string;
   dateOfEvent: Date;
@@ -123,5 +124,5 @@ export type MessageSubscriptionVariables = {
 };
 
 export type AddExpoTokenType = {
-  token: string
-}
+  token: string;
+};

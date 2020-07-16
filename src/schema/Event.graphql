@@ -10,7 +10,7 @@ extend type Query {
   """
   Get a particular event through the ID. Either returns an Event or null
   """
-  getEvent(eventId: ID!): Event
+  getEvent(eventId: ID): Event
 
   """
   Get a list of events for swiping
@@ -31,6 +31,7 @@ extend type Mutation {
   User must at least be authenticated to do so
   """
   createEvent(
+    id: ID
     title: String!
     description: String!
     dateOfEvent: Date!

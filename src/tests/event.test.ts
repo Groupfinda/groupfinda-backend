@@ -250,7 +250,7 @@ describe("Events", () => {
 
     test("getting an event with no id returns error", async () => {
       const result = await eventApi.getEvent({ eventId: "" });
-      expect(result.data.errors[0].message).toBe("ID must be supplied");
+      expect(result.data.data.getEvent).toBe(null);
     });
 
     test("getting an event with invalid id returns null", async () => {

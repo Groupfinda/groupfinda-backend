@@ -36,6 +36,7 @@ export const validUser: CreateUserType = {
 };
 
 export const validEvent: CreateEventType = {
+  id: "",
   title: "My Event",
   description: "At this event people can do whatever they want",
   recurringMode: false,
@@ -53,6 +54,7 @@ export const validEvent: CreateEventType = {
 };
 
 export const validEvent2: CreateEventType = {
+  id: "",
   title: "Different Event",
   description: "specialsearchterm",
   recurringMode: false,
