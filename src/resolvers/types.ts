@@ -130,3 +130,9 @@ export type MessageSubscriptionVariables = {
 export type AddExpoTokenType = {
   token: string;
 };
+
+export type SubmitReportType = {
+  title: string;
+  category: string;
+  description: string;
+}

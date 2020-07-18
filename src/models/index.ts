@@ -4,3 +4,4 @@ export * from "./Group";
 export * from "./Profile";
 export * from "./RangeQuestion";
 export * from "./MessageRoom";
+export * from "./Report";
