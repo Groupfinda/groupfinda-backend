@@ -14,6 +14,10 @@ export type CreateUserType = {
   birthday: Date;
 };
 
+export type FetchUserType = {
+  userId: string;
+}
+
 export type LoginUserType = {
   username: string;
   password: string;

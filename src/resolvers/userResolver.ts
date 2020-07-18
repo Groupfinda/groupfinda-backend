@@ -25,6 +25,7 @@ import {
   UpdateUserType,
   ObjIterator,
   AddExpoTokenType,
+  FetchUserType,
 } from "./types";
 import config from "../config";
 
@@ -39,6 +40,14 @@ const userResolver: IResolvers = {
       const user = await User.findById(context.currentUser.id).exec();
       return user;
     },
+    /**
+     * Queries for other users based on their user ID
+     */
+    fetchUser: async (root: void, args: FetchUserType): Promise<UserType | null> => {
+      if (!args.userId) return null;
+      const user = await User.findById(args.userId).exec();
+      return user;
+    }
   },
   Mutation: {
     /**

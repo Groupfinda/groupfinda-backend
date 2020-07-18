@@ -7,6 +7,12 @@ extend type Query {
   Returns null if not
   """
   me: User
+  """
+  Used for fetching other user's profile for viewing
+  """
+  fetchUser(
+    userId: ID!
+  ): User
 }
 
 extend type Mutation {
