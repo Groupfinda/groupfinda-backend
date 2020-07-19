@@ -14,6 +14,10 @@ export type CreateUserType = {
   birthday: Date;
 };
 
+export type FetchUserType = {
+  userId: string;
+}
+
 export type LoginUserType = {
   username: string;
   password: string;
@@ -126,3 +130,9 @@ export type MessageSubscriptionVariables = {
 export type AddExpoTokenType = {
   token: string;
 };
+
+export type SubmitReportType = {
+  title: string;
+  category: string;
+  description: string;
+}
