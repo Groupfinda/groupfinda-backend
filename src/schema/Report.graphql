@@ -1,0 +1,20 @@
+extend type Query {
+    getAllReports: [Report]
+}
+
+extend type Mutation {
+    submitReport(
+        title: String!
+        category: String!
+        description: String!
+    ): Boolean
+}
+
+type Report {
+    id: ID!
+    title: String!
+    user: User!
+    category: String!
+    description: String!
+    dateCreated: Date!
+}
