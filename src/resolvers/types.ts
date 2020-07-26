@@ -135,4 +135,8 @@ export type SubmitReportType = {
   title: string;
   category: string;
   description: string;
-}
+};
+
+export type DeleteEventType = {
+  eventId: string;
+};

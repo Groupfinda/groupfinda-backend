@@ -18,6 +18,7 @@ import {
   GetEventType,
   ViewEventType,
   ObjIterator,
+  DeleteEventType,
 } from "./types";
 import {
   UserInputError,
@@ -166,6 +167,49 @@ const eventResolver: IResolvers = {
           const savedEvent = await event.save();
           return savedEvent;
         }
+      }
+    ),
+    /**
+     * Deletes an event
+     * User must be authenticated and must own the event
+     * Removes event from all registered users' `eventsRegistered` profile field
+     * Removes event from all liked users' `eventsLiked` profile field
+     * Removes event from all disliked users' `eventsDisliked` profile field
+     */
+    deleteEvent: combineResolvers(
+      isAuthenticated,
+      async (_, args: DeleteEventType, context): Promise<boolean> => {
+        const event = await Event.findById(args.eventId);
+
+        if (!event) {
+          throw new ForbiddenError("No such event found");
+        }
+        if (event.owner.toString() !== context.currentUser.id.toString()) {
+          throw new ForbiddenError('Event does not belong to user')
+        }
+        for (const user of event.registeredUsers) {
+          const profile = await Profile.findOne({ user }).exec()
+          if (!profile) {
+            throw new ApolloError("User not found error when deleting")
+          }
+          profile.eventsRegistered = profile.eventsRegistered.filter(registeredEvent => registeredEvent.toString() !== args.eventId);
+          profile.markModified("eventsRegistered");
+          profile.save();
+        }
+        const likedUsers = await Profile.find({ eventsLiked: args.eventId })
+        const dislikedUsers = await Profile.find({ eventsDisliked: args.eventId })
+        for (const profile of likedUsers) {
+          profile.eventsLiked = profile.eventsLiked.filter(likedEvent => likedEvent.toString() !== args.eventId);
+          profile.markModified("eventsLiked");
+          profile.save();
+        }
+        for (const profile of dislikedUsers) {
+          profile.eventsDisliked = profile.eventsDisliked.filter(dislikedEvent => dislikedEvent.toString() !== args.eventId);
+          profile.markModified("eventsDisliked");
+          profile.save();
+        }
+        await event.remove();
+        return true
       }
     ),
     /**
