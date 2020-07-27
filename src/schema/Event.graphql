@@ -45,6 +45,12 @@ extend type Mutation {
     location: LocationInput!
   ): Event!
   """
+  Deletes an event with the specified eventId if the event belongs to the user
+  """
+  deleteEvent(
+    eventId: String!
+  ): Boolean!
+  """
   Register event for a user. Requires authentication. Will not work if user is already registered
   """
   registerEvent(eventId: String!): Event!
