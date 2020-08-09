@@ -5,6 +5,8 @@ const PORT = process.env.PORT;
 const S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID as string;
 const S3_SECRET_ACCESS_KEY = process.env.S3_SECRET_ACCESS_KEY as string;
 const BUCKET_URL = process.env.BUCKET_URL;
+const EMAIL_ADD = process.env.EMAIL_ADD;
+const EMAIL_PW = process.env.EMAIL_PW;
 
 const ImageURLCreator = (id: string, imageName: string) =>
   `${BUCKET_URL}/users/${id}/${imageName}`;
@@ -16,7 +18,7 @@ let TOKEN_SECRET: string | undefined;
 
 //Production
 let MONGO_USERNAME: string | undefined;
-let MONGO_PASSWORD: string | undefined; 
+let MONGO_PASSWORD: string | undefined;
 
 if (NODE_ENV === "development") {
   MONGO_HOST = "mongodb";
@@ -49,4 +51,6 @@ export default {
   S3_SECRET_ACCESS_KEY,
   BUCKET_URL,
   ImageURLCreator,
+  EMAIL_ADD,
+  EMAIL_PW,
 };

@@ -3,8 +3,8 @@ export default [
     title: "Online Music Festival",
     description: "At this event you can enjoy the latest music trends",
     recurringMode: false,
-    dateOfEvent: new Date("2020-7-15"),
-    dateLastRegister: new Date("2020-7-15"),
+    dateOfEvent: new Date("2021-7-15"),
+    dateLastRegister: new Date("2021-7-15"),
     images: [
       "https://corp.gametize.com/wp-content/uploads/2014/07/events-heavenly-header.jpg",
     ],
@@ -20,10 +20,11 @@ export default [
   },
   {
     title: "Tencent Challenge 2020",
-    description: "This competition aims to discover outstanding game design & development talents and creative game works in universities",
+    description:
+      "This competition aims to discover outstanding game design & development talents and creative game works in universities",
     recurringMode: false,
-    dateOfEvent: new Date("2020-7-8"),
-    dateLastRegister: new Date("2020-7-8"),
+    dateOfEvent: new Date("2021-7-8"),
+    dateLastRegister: new Date("2021-7-8"),
     images: [
       "https://tig.qpic.cn/v3/img/activity/nextidea-en/2020/banner-6bf2c38.jpg",
     ],
@@ -39,10 +40,11 @@ export default [
   },
   {
     title: "Singapore Mobility Challenge",
-    description: "An open innovation initiative for technological solutions that can benefit the public transport industry and commuters.",
+    description:
+      "An open innovation initiative for technological solutions that can benefit the public transport industry and commuters.",
     recurringMode: false,
-    dateOfEvent: new Date("2020-7-7"),
-    dateLastRegister: new Date("2020-7-7"),
+    dateOfEvent: new Date("2021-7-7"),
+    dateLastRegister: new Date("2021-7-7"),
     images: [
       "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F103288994%2F34343493320%2F1%2Foriginal.20200611-100246?h=230&w=460&auto=format%2Ccompress&q=75&sharp=10&rect=0%2C71%2C5000%2C2500&s=073b71ac046dd0f1e75c23c6e20455cc",
     ],
@@ -60,8 +62,8 @@ export default [
     title: "Hack Asia",
     description: "Shaping Hong Kong's Tomorrow. 36-Hour Online Hackathon",
     recurringMode: false,
-    dateOfEvent: new Date("2020-7-6"),
-    dateLastRegister: new Date("2020-7-6"),
+    dateOfEvent: new Date("2021-7-6"),
+    dateLastRegister: new Date("2021-7-6"),
     images: [
       "https://hackasia.s3.ap-east-1.amazonaws.com/statics/challenges/social/HackAsia-SocialCard.jpg",
     ],
@@ -79,13 +81,13 @@ export default [
     title: "Coding",
     description: "Code all day in your room for Orbital",
     recurringMode: false,
-    dateOfEvent: new Date("2020-5-31"),
-    dateLastRegister: new Date("2020-5-29"),
+    dateOfEvent: new Date("2021-5-31"),
+    dateLastRegister: new Date("2021-5-29"),
     images: [
       "https://www.humanesociety.org/sites/default/files/styles/1240x698/public/2018/08/kitten-440379.jpg?h=c8d00152&itok=1fdekAh2",
     ],
     private: false,
-    groupSize: 4,
+    groupSize: 2,
     category: ["fun", "yay"],
     locationOn: false,
     eventCode: "123456",
@@ -99,8 +101,8 @@ export default [
     description:
       "Code all day in your room for Orbital but with a special twist!",
     recurringMode: false,
-    dateOfEvent: new Date("2020-5-31"),
-    dateLastRegister: new Date("2020-5-29"),
+    dateOfEvent: new Date("2021-5-31"),
+    dateLastRegister: new Date("2021-5-29"),
     images: [
       "https://static.toiimg.com/photo/msid-67586673/67586673.jpg?3918697",
       "https://postmediatorontosun.files.wordpress.com/2019/12/cat-e1575303121192.jpg",
@@ -119,8 +121,8 @@ export default [
     title: "Get tilted",
     description: "Self-explanatory",
     recurringMode: false,
-    dateOfEvent: new Date("2020-5-31"),
-    dateLastRegister: new Date("2020-5-29"),
+    dateOfEvent: new Date("2021-5-31"),
+    dateLastRegister: new Date("2021-5-29"),
     images: [
       "https://cdn.mos.cms.futurecdn.net/VSy6kJDNq2pSXsCzb6cvYF.jpg",
       "https://postmediatorontosun.files.wordpress.com/2019/12/cat-e1575303121192.jpg",

@@ -10,7 +10,7 @@ import jwt from "jsonwebtoken";
 import config from "./config";
 import bodyParser from "body-parser";
 import { Group, MessageRoom, User } from "./models";
-import { sendGroupNotification } from './notifications'
+import { sendGroupNotification } from "./notifications";
 
 type ConnectionParams = {
   token: string;
@@ -28,6 +28,7 @@ const validateToken = (token: string) => {
     return null;
   }
 };
+
 const app = express();
 const server = new ApolloServer({
   schema,
@@ -57,6 +58,25 @@ const server = new ApolloServer({
 app.use("*", cors());
 app.use(compression());
 
+app.get("/verify", async (req, res) => {
+  const query = req.query;
+
+  if (query.token) {
+    const token = query.token as string;
+    const email = validateToken(token) as string;
+    const user = await User.findOne({ email }).exec();
+    if (user) {
+      user.isVerified = true;
+      await user.save();
+      res.send("Successfully verified email");
+    } else {
+      res.send("Failed to verify user");
+    }
+  } else {
+    res.send("Invalid token");
+  }
+});
+
 app.post("/newgroup", jsonParser, async (req, res) => {
   const { groupId } = req.body;
   try {
@@ -77,7 +97,7 @@ app.post("/newgroup", jsonParser, async (req, res) => {
         user.groups.push(group.id);
         await user.save();
         if (user.expoToken) {
-          await sendGroupNotification(user.expoToken, group.id.toString())
+          await sendGroupNotification(user.expoToken, group.id.toString());
         }
       }
     }
@@ -90,6 +110,7 @@ app.post("/newgroup", jsonParser, async (req, res) => {
     return res.send(err);
   }
 });
+
 server.applyMiddleware({ app, path: "/graphql" });
 const httpServer = createServer(app);
 server.installSubscriptionHandlers(httpServer);

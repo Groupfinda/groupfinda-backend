@@ -28,6 +28,13 @@ import {
   FetchUserType,
 } from "./types";
 import config from "../config";
+import jwt from "jsonwebtoken";
+import mailer from "../mailer";
+
+const HOSTNAME =
+  config.NODE_ENV === "development"
+    ? "http://localhost:3002"
+    : "http://13.229.108.197:3002";
 
 const userResolver: IResolvers = {
   Query: {
@@ -43,11 +50,14 @@ const userResolver: IResolvers = {
     /**
      * Queries for other users based on their user ID
      */
-    fetchUser: async (root: void, args: FetchUserType): Promise<UserType | null> => {
+    fetchUser: async (
+      root: void,
+      args: FetchUserType
+    ): Promise<UserType | null> => {
       if (!args.userId) return null;
       const user = await User.findById(args.userId).exec();
       return user;
-    }
+    },
   },
   Mutation: {
     /**
@@ -137,6 +147,24 @@ const userResolver: IResolvers = {
         upperAge: 100,
         maxDistance: 100,
       };
+
+      const token = jwt.sign(user.email, <jwt.Secret>config.TOKEN_SECRET);
+      const mail = {
+        from: config.EMAIL_ADD,
+        to: user.email,
+        subject: "Verify your email",
+        html: `Click <a href="${HOSTNAME}/verify?token=${token}">here</a> to verify your account for Groupfinda`,
+      };
+
+      mailer.sendMail(mail, (err, data) => {
+        if (err) {
+          console.log(`Failed to send email to ${user.email}. Error is ${err}`);
+        } else {
+          console.log(
+            `Successfully sent email to ${user.email}. Data is ${data}`
+          );
+        }
+      });
       try {
         await profile.save();
         const savedUser = await user.save();
@@ -271,11 +299,18 @@ const userResolver: IResolvers = {
           const iterator: ObjIterator = args;
           Object.keys(iterator).forEach((key) => {
             if (key === "avatar") {
-              user.set(key, config.ImageURLCreator(context.currentUser.id, iterator[key]))
+              user.set(
+                key,
+                config.ImageURLCreator(context.currentUser.id, iterator[key])
+              );
               user.markModified(key);
-            } else if (key === "lowerAge" || key === "upperAge" || key === "maxDistance"){
+            } else if (
+              key === "lowerAge" ||
+              key === "upperAge" ||
+              key === "maxDistance"
+            ) {
               user.preferences[key] = iterator[key];
-              user.markModified("preferences")
+              user.markModified("preferences");
             } else if (iterator[key]) {
               user.set(key, iterator[key]);
               user.markModified(key);
@@ -295,31 +330,34 @@ const userResolver: IResolvers = {
     addExpoToken: combineResolvers(
       isAuthenticated,
       async (root: void, args: AddExpoTokenType, context): Promise<string> => {
-
-        const { token } = args
-        if (!token) throw new Error("No token supplied")
-        console.log(`Received request to save ${token} to ${context.currentUser.username}`)
-        let user: UserType | null
+        const { token } = args;
+        if (!token) throw new Error("No token supplied");
+        console.log(
+          `Received request to save ${token} to ${context.currentUser.username}`
+        );
+        let user: UserType | null;
         try {
-          user = await User.findById(context.currentUser.id).exec()
+          user = await User.findById(context.currentUser.id).exec();
         } catch (err) {
-          throw new ApolloError(err)
+          throw new ApolloError(err);
         }
 
-        if (!user) throw new AuthenticationError("User not found")
+        if (!user) throw new AuthenticationError("User not found");
 
         user.expoToken = token;
-        user.markModified("expoToken")
+        user.markModified("expoToken");
 
         try {
-          const savedUser = await user.save()
-          console.log(`Saved ${savedUser.username}'s token to be ${savedUser.expoToken}`)
-          return savedUser.expoToken
+          const savedUser = await user.save();
+          console.log(
+            `Saved ${savedUser.username}'s token to be ${savedUser.expoToken}`
+          );
+          return savedUser.expoToken;
         } catch (err) {
-          throw new ApolloError(err)
+          throw new ApolloError(err);
         }
       }
-    )
+    ),
   },
   User: {
     profile: async (root: UserType): Promise<ProfileType> => {
